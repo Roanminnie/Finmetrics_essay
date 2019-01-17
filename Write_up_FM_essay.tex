@@ -1,0 +1,465 @@
+\documentclass[11pt,preprint, authoryear]{elsarticle}
+
+\usepackage{lmodern}
+%%%% My spacing
+\usepackage{setspace}
+\setstretch{1.2}
+\DeclareMathSizes{12}{14}{10}{10}
+
+% Wrap around which gives all figures included the [H] command, or places it "here". This can be tedious to code in Rmarkdown.
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+\let\origtable\table
+\let\endorigtable\endtable
+\renewenvironment{table}[1][2] {
+    \expandafter\origtable\expandafter[H]
+} {
+    \endorigtable
+}
+
+
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+
+\usepackage{amssymb, amsmath, amsthm, amsfonts}
+
+\def\bibsection{\section*{References}} %%% Make "References" appear before bibliography
+
+
+\usepackage[round]{natbib}
+\bibliographystyle{plainnat}
+
+\usepackage{longtable}
+\usepackage[margin=2.3cm,bottom=2cm,top=2.5cm, includefoot]{geometry}
+\usepackage{fancyhdr}
+\usepackage[bottom, hang, flushmargin]{footmisc}
+\usepackage{graphicx}
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+\numberwithin{table}{section}
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{1.3ex plus 0.5ex minus 0.3ex}
+\usepackage{textcomp}
+\renewcommand{\headrulewidth}{0.2pt}
+\renewcommand{\footrulewidth}{0.3pt}
+
+\usepackage{array}
+\newcolumntype{x}[1]{>{\centering\arraybackslash\hspace{0pt}}p{#1}}
+
+%%%%  Remove the "preprint submitted to" part. Don't worry about this either, it just looks better without it:
+\makeatletter
+\def\ps@pprintTitle{%
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@oddfoot\@empty
+  \let\@evenfoot\@oddfoot
+}
+\makeatother
+
+ \def\tightlist{} % This allows for subbullets!
+
+\usepackage{hyperref}
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=blue,
+            pdfborder={0 0 0}}
+
+
+% The following packages allow huxtable to work:
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{calc}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{colortbl}
+
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+%%% Include extra packages specified by user
+% Insert custom packages here as follows
+% \usepackage{tikz}
+
+%%% Hard setting column skips for reports - this ensures greater consistency and control over the length settings in the document.
+%% page layout
+%% paragraphs
+\setlength{\baselineskip}{12pt plus 0pt minus 0pt}
+\setlength{\parskip}{12pt plus 0pt minus 0pt}
+\setlength{\parindent}{0pt plus 0pt minus 0pt}
+%% floats
+\setlength{\floatsep}{12pt plus 0 pt minus 0pt}
+\setlength{\textfloatsep}{20pt plus 0pt minus 0pt}
+\setlength{\intextsep}{14pt plus 0pt minus 0pt}
+\setlength{\dbltextfloatsep}{20pt plus 0pt minus 0pt}
+\setlength{\dblfloatsep}{14pt plus 0pt minus 0pt}
+%% maths
+\setlength{\abovedisplayskip}{12pt plus 0pt minus 0pt}
+\setlength{\belowdisplayskip}{12pt plus 0pt minus 0pt}
+%% lists
+\setlength{\topsep}{10pt plus 0pt minus 0pt}
+\setlength{\partopsep}{3pt plus 0pt minus 0pt}
+\setlength{\itemsep}{5pt plus 0pt minus 0pt}
+\setlength{\labelsep}{8mm plus 0mm minus 0mm}
+\setlength{\parsep}{\the\parskip}
+\setlength{\listparindent}{\the\parindent}
+%% verbatim
+\setlength{\fboxsep}{5pt plus 0pt minus 0pt}
+
+
+
+\begin{document}
+
+\begin{frontmatter}  %
+
+\title{A Descriptive Narrative of Economic Policy Uncertainty in South Africa}
+
+% Set to FALSE if wanting to remove title (for submission)
+
+
+
+
+\author[Add1]{Roan Minnie}
+\ead{roanminnie@gmail.com}
+
+\author[Add2]{Nicolaas Johannes Odendaal}
+\ead{hanjo.oden@gmail.com}
+
+
+
+
+\address[Add1]{Stellenbosch University, Stellenbosch, South Africa}
+\address[Add2]{Stellenbosch University, Stellenbosch, South Africa; Bureau of Economic
+Research, South Africa}
+
+\cortext[cor]{Corresponding author: Roan Minnie}
+
+
+\vspace{1cm}
+
+\begin{keyword}
+\footnotesize{
+ \\ \vspace{0.3cm}
+\textit{JEL classification} 
+}
+\end{keyword}
+\vspace{0.5cm}
+\end{frontmatter}
+
+
+
+%________________________
+% Header and Footers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{fancy}
+\chead{}
+\rhead{}
+\lfoot{}
+\rfoot{\footnotesize Page \thepage\\}
+\lhead{}
+%\rfoot{\footnotesize Page \thepage\ } % "e.g. Page 2"
+\cfoot{}
+
+%\setlength\headheight{30pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%________________________
+
+\headsep 35pt % So that header does not go over title
+
+
+
+
+\section{\texorpdfstring{Introduction
+\label{sec_intro}}{Introduction }}\label{introduction}
+
+The aim of this paper is to provide a descriptive narrative of economic
+policy uncertainty in South Africa since \ldots{} To this end, an EPU
+index is constructed using text data from online news sources.
+
+\section{\texorpdfstring{Economic policy uncertainty in existing
+literature
+\label{sec_litreview}}{Economic policy uncertainty in existing literature }}\label{economic-policy-uncertainty-in-existing-literature}
+
+Existing literature provide several definitions of uncertainty. In
+general terms, Jurado, Ludvigson, and Ng
+(\protect\hyperlink{ref-Jurado2015}{2015}) define uncertainty as
+volatility in shocks that cannot be forecasted by economic agents. Bloom
+(\protect\hyperlink{ref-Bloom2014}{2014}) echo this by describing
+uncertainty as a concept that occupies the minds of agents in relation
+to possible future events. More specifically, Baker, Bloom, and Davis
+(\protect\hyperlink{ref-Baker2016}{2016}) define economic policy
+uncertainty not only as uncertainty about policies as such, but also
+about who is making policy decisions and the effects thereof. It is
+important to note that uncertainty is defined in terms of all agents in
+the economy - as stated by Bloom
+(\protect\hyperlink{ref-Bloom2014}{2014}) - consumers, managers and
+policymakers. The remainder of this paper will thus refer to EPU at this
+aggregated level.
+
+The sole purpose of this paper is to provide a narrative of the
+evolution of economic policy uncertainty in South Africa that is heavily
+supported by descriptive analysis. An obvious extension to this research
+is to investigate the impact of uncertainty on key variables of
+interest. Albeit not within the scope of this paper, it is still
+pertinent to motivate the rationale for constructing a measure of EPU by
+looking at the relationships existing literature have uncovered. A
+delineation between a macro- and microeconomic focus is immediate in
+this literature. This paper will suffice with motivating the usefulness
+of a measure for EPU by referring to this literature below.
+
+In terms of the microeconomy, Bachmann, Elstner, and Sims
+(\protect\hyperlink{ref-Bachmann2013}{2013}) find that there is a
+decline in production and employment in response to a shock in EPU.
+Bloom (\protect\hyperlink{ref-Bloom2014}{2014}) echoes that the level of
+uncertainty at a microeconomic level (i.e.~individual industries, firms
+and plants) is usually higher during times of economic recessions.
+However, not sufficiently controlling for the economic conditions that
+can also influence production and employment can confound the estimate
+of the impact of EPU on these variables. To this end, Caggiano,
+Castelnuovo, and Groshenny (\protect\hyperlink{ref-Caggiano2014}{2014})
+show that not taking into account that uncertainty shocks occur mostly
+in economic recessions, leads to an underestimation of the negative
+relationship between uncertainty and unemployment. It is immediate that
+aggregating the industry/firm level effects will feed into the
+macroeconomy.
+
+At the macroeconomic level, Baker, Bloom, and Davis
+(\protect\hyperlink{ref-Baker2016}{2016}) find that rising uncertainty
+in the United States is a leading indicator for declining investment,
+production and employment. However, since the global financial crisis
+(GFC), most macroeconomic literature pertaining to uncertainty have been
+concerned with linkages to financial markets. Caldara et al.
+(\protect\hyperlink{ref-Caldara2016}{2016}) go as far in stating that
+the interaction between uncertainty and financial shocks is ``toxic''
+and that the GFC was likely due to an acute manifestation of this. Other
+scholars establish relationships between EPU and the equity option
+market (Kelly, Pástor, and Veronesi
+\protect\hyperlink{ref-Kelly2016}{2016}), increased stock price
+volatility (Baker, Bloom, and Davis
+\protect\hyperlink{ref-Baker2016}{2016}) and increased risk premia
+(Pástor and Veronesi \protect\hyperlink{ref-Pastor2013}{2013}).
+
+The above discussion illustrates the usefulness of a measure for EPU. It
+now remains to be ascertained how exactly to measure it. Earlier
+literature (see e.g. Bachmann, Elstner, and Sims
+(\protect\hyperlink{ref-Bachmann2013}{2013})) made use of survey data
+and constructed an EPU index by measuring the discrepancies between
+respondents' answers to forward-looking questions. Redl
+(\protect\hyperlink{ref-Redl2015}{2015}) takes an alternative approach,
+employing inter alia data from professional forecasting competitions and
+scrutinising official economic reviews released by the South African
+Reserve Bank to construct an EPU index.
+
+More recently, a novel approach by Baker, Bloom, and Davis
+(\protect\hyperlink{ref-Baker2016}{2016}) garnered academic praise and
+an increasing number of scholars followed suit. The approach developed
+by Baker, Bloom, and Davis (\protect\hyperlink{ref-Baker2016}{2016})
+gauge EPU by extracting information from newspaper articles. The most
+basic index is constructed using the frequency of articles containing
+words related to uncertainty. Refinements on the basic index attempt to,
+inter alia, control for linguistic modality (Tobback et al.
+\protect\hyperlink{ref-Tobback2018}{2018}), eliminate the need for human
+classification of articles by using support vector machines
+(Azqueta-Gavaldón \protect\hyperlink{ref-Azqueta-Gavaldon2017}{2017})
+and provide a greater level of disaggregation in terms of policy
+categories (Baker, Bloom, and Davis
+\protect\hyperlink{ref-Baker2016}{2016}). The methodologies of these
+papers are not discussed here as it overlaps greatly with the
+methodology discussed in section \ref{sec_method}.
+
+\section{\texorpdfstring{Constructing an Economic Policy Uncertainty
+Index for South Africa
+\label{sec_EPU}}{Constructing an Economic Policy Uncertainty Index for South Africa }}\label{constructing-an-economic-policy-uncertainty-index-for-south-africa}
+
+\subsection{\texorpdfstring{Data \label{sec_data}}{Data }}\label{data}
+
+\subsection{\texorpdfstring{Methodology
+\label{sec_method}}{Methodology }}\label{methodology}
+
+This paper presents two sets of indices - the naive and the refined -
+both following the same methodology. The delineating factor is the way
+in which the uncertainty score for each article is calculated. As such,
+this calculation for the respective indices is discussed before
+explaining the general methodology of constructing the indices.
+
+For the naive approach, the uncertainty score is simply a binary
+variable that is equal to one if the article contains the word
+``uncertain'' at least once and zero otherwise. Albeit being able to
+quantify uncertainty to an extent, the naive index is rigid in its
+application. Tobback et al. (\protect\hyperlink{ref-Tobback2018}{2018})
+state that every article matching the aforementioned criteria forms part
+of the naive index, regardless of the entity that the uncertainty is
+related to. To control for this, the naive index is calculated for
+uncertainty pertaining to specific topics. This is achieved by
+identifying a subset of the articles.\textless{}-- I will elaborate on
+this point once I've indentified the categories that I am constructing
+the indices for e.g.~finance, stock markets etc--\textgreater{}
+
+A further shortcoming of the naive index is that articles are weighted
+equally, i.e.~all articles containing the word ``uncertain'' contribute
+one towards the uncertainty score. In reality, there is a range of words
+that can convey uncertainty and not all articles convey the same level
+of uncertainty. Therefore, the refined uncertainty index evaluates the
+raw text data for words contained in the Loughran and Mcdonald
+(\protect\hyperlink{ref-Loughran2016}{2016}) dictionary pertaining to
+uncertainty. In doing so, the uncertainty measure is a continuous
+variable and each article's contribution to the uncertainty score is
+proportional to this score. \textless{}--elaborate more on this method
+(frequency over wordcount) as well as the choice of dictionary
+--\textgreater{}
+
+Having demonstrated the different ways in which the naive- and refined
+approach measure the uncertainty score it can now be shown how these
+scores are translated into an index. As mentioned, the methodology to
+calculate the indices are the same and the only difference is the way
+that uncertainty is measured. As such the general methodology developed
+by Baker, Bloom, and Davis (\protect\hyperlink{ref-Baker2016}{2016}) is
+explained below.
+
+First, the subset of the data is identified by filtering the data to
+only articles containing the relevant word. The daily uncertainty score
+is then calculated by adding the scores for all the articles in the
+subset. Since the number of articles in the subset varies per day, the
+score is standardised by dividing by by the number of articles in the
+subset. The variance of the daily standardised score is then calculated
+for every month. Finally, the first month of the dataset is chosen as
+the reference period and subsequent months are standardised by dividing
+by the reference period.
+
+The above explanation can be framed mathematically as follows: Denote an
+article as \(a_{jit}\) and define its uncertainty score as \(us_{jit}\)
+where \(j\) denotes the article, \(i\) the day and \(t\) the month. The
+uncertainty score per article is aggregated to obtain the daily
+uncertainty score, \(\sum_{j=1}^J us_{jit} = US_{it}\). The standardised
+score is calculated by dividing this by the total articles pertaining to
+a certain topic published on a day,
+\(X_{it}=\frac{US_{it}}{\sum_{j=1}^J a_{jit}}\). Finally, the variance
+is calculated by month and scaled by the first month to obtain the index
+value for each month, \(index = \frac{var(X_t)}{var(X_0)}\).
+
+\subsection{\texorpdfstring{Results
+\label{sec_results}}{Results }}\label{results}
+
+\section{\texorpdfstring{The evolution of Economic Policy Uncertainty in
+South Africa
+\label{sec_discuss}}{The evolution of Economic Policy Uncertainty in South Africa }}\label{the-evolution-of-economic-policy-uncertainty-in-south-africa}
+
+\section{\texorpdfstring{Conclusion
+\label{sec_conclude}}{Conclusion }}\label{conclusion}
+
+\newpage
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\hypertarget{refs}{}
+\hypertarget{ref-Azqueta-Gavaldon2017}{}
+Azqueta-Gavaldón, Andrés. 2017. ``Developing News-Based Economic Policy
+Uncertainty Index with Unsupervised Machine Learning.'' \emph{Economics
+Letters} 158 (September): 47--50.
+doi:\href{https://doi.org/10.1016/j.econlet.2017.06.032}{10.1016/j.econlet.2017.06.032}.
+
+\hypertarget{ref-Bachmann2013}{}
+Bachmann, Rüdiger, Steffen Elstner, and Eric R Sims. 2013. ``Uncertainty
+and Economic Activity: Evidence from Business Survey Data.''
+\emph{American Economic Journal: Macroeconomics} 5 (2): 217--49.
+doi:\href{https://doi.org/10.1257/mac.5.2.217}{10.1257/mac.5.2.217}.
+
+\hypertarget{ref-Baker2016}{}
+Baker, Scott R., Nicholas Bloom, and Steven J. Davis. 2016. ``Measuring
+Economic Policy Uncertainty.'' \emph{The Quarterly Journal of Economics}
+131 (4): 1593--1636.
+doi:\href{https://doi.org/10.1093/qje/qjw024}{10.1093/qje/qjw024}.
+
+\hypertarget{ref-Bloom2014}{}
+Bloom, Nicholas. 2014. ``Fluctuations in Uncertainty.'' \emph{Journal of
+Economic Perspectives} 28 (2): 153--76.
+doi:\href{https://doi.org/10.1257/jep.28.2.153}{10.1257/jep.28.2.153}.
+
+\hypertarget{ref-Caggiano2014}{}
+Caggiano, Giovanni, Efrem Castelnuovo, and Nicolas Groshenny. 2014.
+``Uncertainty Shocks and Unemployment Dynamics in U.S. Recessions.''
+\emph{Journal of Monetary Economics} 67 (October): 78--92.
+doi:\href{https://doi.org/10.1016/j.jmoneco.2014.07.006}{10.1016/j.jmoneco.2014.07.006}.
+
+\hypertarget{ref-Caldara2016}{}
+Caldara, Dario, Cristina Fuentes-Albero, Simon Gilchrist, and Egon
+Zakrajšek. 2016. ``The Macroeconomic Impact of Financial and Uncertainty
+Shocks.'' \emph{European Economic Review} 88 (September): 185--207.
+doi:\href{https://doi.org/10.1016/j.euroecorev.2016.02.020}{10.1016/j.euroecorev.2016.02.020}.
+
+\hypertarget{ref-Jurado2015}{}
+Jurado, Kyle, Sydney C. Ludvigson, and Serena Ng. 2015. ``Measuring
+Uncertainty.'' \emph{American Economic Review} 105 (3): 1177--1216.
+doi:\href{https://doi.org/10.1257/aer.20131193}{10.1257/aer.20131193}.
+
+\hypertarget{ref-Kelly2016}{}
+Kelly, Bryan, Ľuboš Pástor, and Pietro Veronesi. 2016. ``The Price of
+Political Uncertainty: Theory and Evidence from the Option Market: The
+Price of Political Uncertainty.'' \emph{The Journal of Finance} 71 (5):
+2417--80.
+doi:\href{https://doi.org/10.1111/jofi.12406}{10.1111/jofi.12406}.
+
+\hypertarget{ref-Loughran2016}{}
+Loughran, Tim, and Bill Mcdonald. 2016. ``Textual Analysis in Accounting
+and Finance: A Survey: TEXTUAL ANALYSIS IN ACCOUNTING AND FINANCE.''
+\emph{Journal of Accounting Research} 54 (4): 1187--1230.
+doi:\href{https://doi.org/10.1111/1475-679X.12123}{10.1111/1475-679X.12123}.
+
+\hypertarget{ref-Pastor2013}{}
+Pástor, Ľuboš, and Pietro Veronesi. 2013. ``Political Uncertainty and
+Risk Premia.'' \emph{Journal of Financial Economics} 110 (3): 520--45.
+doi:\href{https://doi.org/10.1016/j.jfineco.2013.08.007}{10.1016/j.jfineco.2013.08.007}.
+
+\hypertarget{ref-Redl2015}{}
+Redl, Chris. 2015. ``Macroeconomic Uncertainty in South Africa,'' 34.
+
+\hypertarget{ref-Tobback2018}{}
+Tobback, Ellen, Hans Naudts, Walter Daelemans, Enric Junqué de Fortuny,
+and David Martens. 2018. ``Belgian Economic Policy Uncertainty Index:
+Improvement Through Text Mining.'' \emph{International Journal of
+Forecasting} 34 (2): 355--65.
+doi:\href{https://doi.org/10.1016/j.ijforecast.2016.08.006}{10.1016/j.ijforecast.2016.08.006}.
+
+% Force include bibliography in my chosen format:
+
+\bibliographystyle{Tex/Texevier}
+\bibliography{Tex/ref}
+
+
+
+
+
+\end{document}

@@ -1,0 +1,457 @@
+---
+title: "README_FINAL"
+author: "Roan Minnie"
+date: "21 November 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
+```
+#Setup 
+Loading the necessary packages
+```{r}
+if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
+if(!require("future")) install.packages("future")
+library(rmsfuns)
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr"))
+```
+Create the necessary folders
+```{r}
+Practical.loc.root <- file.path(getwd())
+Practical.loc.subdirs <- c("data", "code", "bin")
+PracLoc <- build_path(glue::glue("{Practical.loc.root}/{Practical.loc.subdirs}"))
+```
+Loading and cleaning data 
+```{r Reading and cleaing data}
+#read in data here
+rawdata <- readRDS("data/all_sabinet.rds") %>% 
+  tbl_df %>% 
+  distinct(art_date, id, .keep_all = T)
+#rename columns here, in order: Date, ID, paper and body
+colnames(rawdata)[colnames(rawdata) == "art_date"] <- "PubDate"
+colnames(rawdata)[colnames(rawdata) == "id"] <- "ID"
+colnames(rawdata)[colnames(rawdata) == "publication"] <- "paper"
+colnames(rawdata)[colnames(rawdata) == "article"] <- "Body"
+
+#Formating of data
+rawdata <-  rawdata %>% 
+  mutate(PubDate = as.Date(PubDate)) %>% 
+  select(PubDate, ID, paper, Body) %>% 
+  arrange(PubDate) %>% 
+  mutate(year_month = format(PubDate, "%Y-%m")) %>% 
+  tbl_df %>% 
+  distinct()
+```
+parallel computing
+```{r Parallel computing}
+#use parallel function to reduce execution time
+cl <- makeClusterPSOCK(availableCores() - 1)
+plan(cluster, workers = cl, gc = T)
+
+# allow futures to export objects of size 1GB or more to nodes
+options(future.globals.maxSize= 3000*1024^2)
+```
+
+#Building the uncertainty scores
+```{r Uncertainty score- naive}
+#start by specifying the keyword vector
+key_word <- c("uncertain")
+#source the function that searches for keywords
+source("code/fn_keyword.R")
+
+#apply the function to the vector defined above 
+indicator_table <- tibble(key_word = key_word) %>% 
+  mutate(outcome = future_map(key_word, ~.x %>% fn_keyword(.)))
+
+#create the boolean index dataset
+naive_us <- indicator_table %>% 
+  pull(outcome) %>% reduce(left_join, by = c("PubDate", "year_month", "ID", "Body")) %>%
+  distinct %>% 
+  arrange(PubDate) 
+
+```
+
+```{r uncertainty score-refined}
+data(DictionaryLM)
+str(DictionaryLM)
+
+ruleUncertainy <- function (dtm, d) 
+{
+  if (!inherits(d, "SentimentDictionaryBinary")) {
+    stop("Rule does not support dictionary type")
+  }
+  return((rowSums(as.matrix(dtm[, which(colnames(dtm) %in% 
+                                          d$uncertainty)])))/rowSums(as.matrix(dtm)))
+}
+
+
+sentiment <- analyzeSentiment(rawdata$Body[1],
+                              rules = list("UncertaintyLM" = list(ruleSentiment, loadDictionaryLM())))
+
+f_uncertainty <- function(body){
+  analyzeSentiment(body,
+                                rules = list("UncertaintyLM" = list(ruleSentiment, loadDictionaryLM()))) %>% 
+    unlist
+}
+
+refine_dataset <- naive_dataset %>% 
+  select(PubDate, year_month, ID, Body) %>% 
+  mutate(uncertain = map_dbl(Body, ~.x %>% f_uncertainty))
+```
+
+#Building topic specific indices
+The following code chunks provide the methodology to create a naive (Boolean) dataset.
+The function, fn_keyword, takes as input a vector of keywords which is searched for in the articles in the dataset. It creates a column for each keyword in the vector containing a 1 or 0 depending on the outcome of the search. 
+```{r Political}
+#start by specifying the keyword vector
+key_word <- c("econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+#source the function that searches for keywords
+source("code/fn_keyword.R")
+
+#apply the function to the vector defined above 
+indicator_table <- tibble(key_word = key_word) %>% 
+  mutate(outcome = future_map(key_word, ~.x %>% fn_keyword(.)))
+
+#create the boolean index dataset
+political_dataset <- indicator_table %>% 
+  pull(outcome) %>% reduce(left_join, by = c("PubDate", "year_month", "ID", "Body")) %>%
+  distinct %>% 
+  arrange(PubDate) 
+write_rds(political_dataset, "data/political_full.rds")
+
+political_small <- political_dataset %>% select(-ID, -Body)
+write_rds(political_small, "data/political.rds")
+
+
+```
+
+
+```{r fiscal}
+#start by specifying the keyword vector
+key_word <- c("econom", "policy", "fiscal","parliament","legislation", "minister", "budget", "financ", "speech", "government", "bill", "tax", "VAT", "downgrade", "debt", "sovereign", "rating", "credit","expenditure", "spending")
+#source the function that searches for keywords
+source("code/fn_keyword.R")
+
+#apply the function to the vector defined above 
+indicator_table <- tibble(key_word = key_word) %>% 
+  mutate(outcome = future_map(key_word, ~.x %>% fn_keyword(.)))
+
+#create the boolean index dataset
+fiscal_dataset <- indicator_table %>% 
+  pull(outcome) %>% reduce(left_join, by = c("PubDate", "year_month", "ID", "Body")) %>%
+  distinct %>% 
+  arrange(PubDate) 
+
+write_rds(fiscal_dataset, "data/fiscal_full.rds")
+
+fiscal_small <- fiscal_dataset %>% select(-ID, -Body)
+write_rds(fiscal_small, "data/fiscal.rds")
+
+```
+
+```{r monetary}
+#start by specifying the keyword vector
+key_word <- c("econom", "policy", "price", "inflation", "monetary", "committee", "oil", "shock", "SARB", "reserve bank", "interest", "rate", "repo", "review", "hike", "increase", "decrease", "lower")
+#source the function that searches for keywords
+source("code/fn_keyword.R")
+
+#apply the function to the vector defined above 
+indicator_table <- tibble(key_word = key_word) %>% 
+  mutate(outcome = future_map(key_word, ~.x %>% fn_keyword(.)))
+
+#create the boolean index dataset
+monetary_dataset <- indicator_table %>% 
+  pull(outcome) %>% reduce(left_join, by = c("PubDate", "year_month", "ID", "Body")) %>%
+  distinct %>% 
+  arrange(PubDate) 
+
+write_rds(monetary_dataset, "data/monetary_full.rds")
+
+monetary_small <- monetary_dataset %>% select(-ID, -Body)
+write_rds(monetary_small, "data/monetary.rds")
+```
+
+```{r financial}
+#start by specifying the keyword vector
+key_word <- c("econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank")
+#source the function that searches for keywords
+source("code/fn_keyword.R")
+
+#apply the function to the vector defined above 
+indicator_table <- tibble(key_word = key_word) %>% 
+  mutate(outcome = future_map(key_word, ~.x %>% fn_keyword(.)))
+
+#create the boolean index dataset
+financial_dataset <- indicator_table %>% 
+  pull(outcome) %>% reduce(left_join, by = c("PubDate", "year_month", "ID", "Body")) %>%
+  distinct %>% 
+  arrange(PubDate)
+
+write_rds(financial_dataset, "data/financial_full.rds")
+
+financial_small <- financial_dataset %>% select(-ID, -Body)
+write_rds(financial_small, "data/financial.rds")
+```
+
+#Topic specific uncertainty indices
+##Political
+```{r}
+criteria <- c("econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+
+#constructing the naive index per keyword in the political category
+fn_naive<- function(criteria){
+political_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  arrange(PubDate) %>% 
+  group_by(PubDate) %>%
+  add_tally() %>% ungroup() %>% 
+  select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
+  group_by(PubDate) %>% 
+  mutate(sum_n = sum(naive_us)) %>% 
+  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  select(PubDate, year_month, freq) %>%
+  unique() %>% 
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+political_naive <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_naive(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(political_naive) <- c("year_mnth","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+
+write_rds(x = political_naive, "data/political_naive.rds")
+
+
+#constructing the refined index per keyword in the political category
+
+fn_refine<- function(criteria){
+political_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  select(PubDate, year_month, refine_us) %>%
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+political_refine <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_refine(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(political_refine) <- c("year_mnth","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+
+write_rds(x = political_refine, "data/political_refine.rds")
+
+```
+
+
+##Fiscal
+```{r}
+criteria <- c("econom", "policy", "fiscal","parliament","legislation", "minister", "budget", "financ", "speech", "government", "bill", "tax", "VAT", "downgrade", "debt", "sovereign", "rating", "credit","expenditure", "spending")
+
+fiscal_us <- fiscal %>% 
+  mutate(naive_us=naive_raw$uncertain) %>% 
+  mutate(refine_us=refine_raw$uncertain)
+
+#constructing the naive index per keyword in the fiscal category
+fn_naive<- function(criteria){
+fiscal_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  arrange(PubDate) %>% 
+  group_by(PubDate) %>%
+  add_tally() %>% ungroup() %>% 
+  select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
+  group_by(PubDate) %>% 
+  mutate(sum_n = sum(naive_us)) %>% 
+  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  select(PubDate, year_month, freq) %>%
+  unique() %>% 
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+fiscal_naive <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_naive(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(fiscal_naive) <- c("year_month","econom", "policy", "fiscal","parliament","legislation", "minister", "budget", "financ", "speech", "government", "bill", "tax", "VAT", "downgrade", "debt", "sovereign", "rating", "credit","expenditure", "spending")
+
+write_rds(x = fiscal_naive, "data/fiscal_naive.rds")
+
+
+#constructing the refined index per keyword in the fiscal category
+
+fn_refine<- function(criteria){
+fiscal_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  select(PubDate, year_month, refine_us) %>%
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+fiscal_refine <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_refine(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(fiscal_refine) <- c("year_month","econom", "policy", "fiscal","parliament","legislation", "minister", "budget", "financ", "speech", "government", "bill", "tax", "VAT", "downgrade", "debt", "sovereign", "rating", "credit","expenditure", "spending")
+
+write_rds(x = fiscal_refine, "data/fiscal_refine.rds")
+```
+
+##Monetary
+```{r}
+criteria <- c("econom", "policy", "price", "inflation", "monetary", "committee", "oil", "shock", "SARB", "interest", "rate", "repo", "review", "hike", "increase", "decrease", "lower")
+
+monetary_us <- monetary %>% 
+  mutate(naive_us=naive_raw$uncertain) %>% 
+  mutate(refine_us=refine_raw$uncertain)
+
+#constructing the naive index per keyword in the monetary category
+fn_naive<- function(criteria){
+monetary_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  arrange(PubDate) %>% 
+  group_by(PubDate) %>%
+  add_tally() %>% ungroup() %>% 
+  select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
+  group_by(PubDate) %>% 
+  mutate(sum_n = sum(naive_us)) %>% 
+  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  select(PubDate, year_month, freq) %>%
+  unique() %>% 
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+monetary_naive <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_naive(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(monetary_naive) <- c("year_month","econom", "policy", "price", "inflation", "monetary", "committee", "oil", "shock", "SARB", "interest", "rate", "repo", "review", "hike", "increase", "decrease", "lower")
+
+write_rds(x = monetary_naive, "data/monetary_naive.rds")
+
+
+#constructing the refined index per keyword in the monetary category
+
+fn_refine<- function(criteria){
+monetary_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  select(PubDate, year_month, refine_us) %>%
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+monetary_refine <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_refine(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(monetary_refine) <- c("year_month","econom", "policy", "price", "inflation", "monetary", "committee", "oil", "shock", "SARB", "interest", "rate", "repo", "review", "hike", "increase", "decrease", "lower")
+
+write_rds(x = monetary_refine, "data/monetary_refine.rds")
+```
+
+##Finance
+```{r}
+criteria <- c("econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+
+financial_us <- financial %>% 
+  mutate(financ = naive_raw$financ) %>% 
+  mutate(stock = naive_raw$stock) %>% 
+  mutate(market = naive_raw$market) %>% 
+  mutate(JSE = naive_raw$JSE) %>% 
+  mutate(exchange = naive_raw$exchange) %>% 
+  mutate(rand = naive_raw$rand) %>% 
+  mutate(naive_us=naive_raw$uncertain) %>% 
+  mutate(refine_us=refine_raw$uncertain)
+
+#constructing the naive index per keyword in the monetary category
+fn_naive<- function(criteria){
+financial_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  arrange(PubDate) %>% 
+  group_by(PubDate) %>%
+  add_tally() %>% ungroup() %>% 
+  select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
+  group_by(PubDate) %>% 
+  mutate(sum_n = sum(naive_us)) %>% 
+  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  select(PubDate, year_month, freq) %>%
+  unique() %>% 
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+financial_naive <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_naive(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(financial_naive) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+write_rds(x = financial_naive, "data/financial_naive.rds")
+
+
+#constructing the refined index per keyword in the monetary category
+
+fn_refine<- function(criteria){
+financial_us %>% 
+  filter(PubDate >="2004-01-01") %>% 
+  filter(!!rlang::parse_quosure(criteria)=="1") %>% 
+  select(PubDate, year_month, refine_us) %>%
+  group_by(year_month) %>% 
+  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
+  select(year_month, uncertain) %>% 
+  unique()
+}
+
+financial_refine <- tibble(criteria = criteria) %>% 
+  mutate(outcome = future_map(criteria, ~.x %>% fn_refine(.))) %>% 
+  pull(outcome) %>% reduce(left_join, by = "year_month") %>%
+  distinct 
+
+colnames(financial_refine) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+
+write_rds(x = financial_refine, "data/financial_refine.rds")
+```
+
+
+
+
+
+

@@ -1,0 +1,121 @@
+---
+# IMPORTANT: Change settings here, but DO NOT change the spacing. 
+# Remove comments and add values where applicable. 
+# The descriptions below should be self-explanatory
+
+title: "A Descriptive Narrative of Economic Policy Uncertainty in South Africa"
+#subtitle: "This will appear as Right Header"
+
+documentclass: "elsarticle"
+
+# Comment: ----- Follow this pattern for up to 5 authors
+Author1: "Roan Minnie"  # First Author
+Ref1: "Stellenbosch University, Stellenbosch, South Africa" # First Author's Affiliation
+Email1: "roanminnie\\@gmail.com" # First Author's Email address
+Author2: "Nicolaas Johannes Odendaal"  # First Author
+Ref2: "Stellenbosch University, Stellenbosch, South Africa; Bureau of Economic Research, South Africa" # First Author's Affiliation
+Email2: "hanjo.oden\\@gmail.com" # First Author's Email address
+
+CorrespAuthor_1: TRUE  # If corresponding author is author 3, e.g., use CorrespAuthor_3: TRUE
+
+keywords: "" # Use \\sep to separate
+JELCodes: ""
+
+# Comment: ----- Manage headers and footers:
+#BottomLFooter: $Title$
+#BottomCFooter:
+#TopLHeader: \leftmark # Adds section name at topleft. Remove comment to add it.
+BottomRFooter: "\\footnotesize Page \\thepage\\" # Add a '#' before this line to remove footer.
+addtoprule: TRUE
+addfootrule: TRUE               # Use if footers added. Add '#' to remove line.
+
+# Setting page margins:
+margin: 2.3 # Sides
+bottom: 2 # bottom
+top: 2.5 # Top
+
+linenumbers: FALSE # Used when submitting to journal
+AddTitle: TRUE # Used when submitting to peer reviewed platform. This will remove author names. 
+
+HardSet_layout: TRUE # Hard-set the spacing of words in your document. This will stop LaTeX squashing text to fit on pages, e.g. This is done by hard-setting the spacing dimensions. Set to FALSE if you want LaTeX to optimize this for your paper. 
+bibliography: Tex/ref.bib       # Do not edit: Keep this naming convention and location.
+RemovePreprintSubmittedTo: TRUE  # Removes the 'preprint submitted to...' at bottom of titlepage
+Journal: "Journal of Finance"   # Journal that the paper will be submitting to, if RemovePreprintSubmittedTo is set to TRUE.
+toc: no                         # Add a table of contents
+numbersections: yes             # Should sections (and thus figures and tables) be numbered?
+fontsize: 11pt                  # Set fontsize
+linestretch: 1.2                # Set distance between lines.
+link-citations: TRUE            # This creates dynamic links to the papers in reference list.
+output:
+  pdf_document:
+    keep_tex: TRUE
+    template: Tex/TexDefault.txt
+    fig_width: 3.5 # Adjust default figure sizes. This can also be done in the chunks of the text.
+    fig_height: 3.5
+    include:
+      in_header: Tex/packages.txt # Reference file with extra packages
+abstract: |
+
+---
+
+<!-- First: Set your default preferences for chunk options: -->
+
+<!-- If you want a chunk's code to be printed, set echo = TRUE. message = FALSE stops R printing ugly package loading details in your final paper too. I also suggest setting warning = FALSE and checking for warnings in R, else you might find ugly warnings in your paper. -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width = 6, fig.height = 5, fig.pos="H", fig.pos = 'H')
+# Note: Include = FALSE implies the code is executed, but not printed in your pdf.
+# warning and message = FALSE implies ugly messages and warnings are removed from your pdf. These should be picked up when you execute the command chunks (code sections below) in your rmd, not printed in your paper!
+
+```
+
+
+# Introduction \label{sec_intro}
+The aim of this paper is to provide a descriptive narrative of economic policy uncertainty in South Africa since ... To this end, an EPU index is constructed using text data from online news sources. 
+
+# Economic policy uncertainty in existing literature \label{sec_litreview}
+Existing literature provide several definitions of uncertainty. In general terms, @Jurado2015 define uncertainty as volatility in shocks that cannot be forecasted by economic agents. @Bloom2014 echo this by describing uncertainty as a concept that occupies the minds of agents in relation to possible future events. More specifically, @Baker2016 define economic policy uncertainty not only as uncertainty about policies as such, but also about who is making policy decisions and the effects thereof. It is important to note that uncertainty is defined in terms of all agents in the economy - as stated by @Bloom2014 - consumers, managers and policymakers. The remainder of this paper will thus refer to EPU at this aggregated level. 
+
+The sole purpose of this paper is to provide a narrative of the evolution of economic policy uncertainty in South Africa that is heavily supported by descriptive analysis. An obvious extension to this research is to investigate the impact of uncertainty on key variables of interest. Albeit not within the scope of this paper, it is still pertinent to motivate the rationale for constructing a measure of EPU by looking at the relationships existing literature have uncovered. A delineation between a macro- and microeconomic focus is immediate in this literature. This paper will suffice with motivating the usefulness of a measure for EPU by referring to this literature below.  
+
+In terms of the microeconomy, @Bachmann2013 find that there is a decline in production and employment in response to a shock in EPU. @Bloom2014 echoes that the level of uncertainty at a microeconomic level (i.e. individual industries, firms and plants) is usually higher during times of economic recessions. However, not sufficiently controlling for the economic conditions that can also influence production and employment can confound the estimate of the impact of EPU on these variables. To this end, @Caggiano2014 show that not taking into account that uncertainty shocks occur mostly in economic recessions, leads to an underestimation of the negative relationship between uncertainty and unemployment. It is immediate that aggregating the industry/firm level effects will feed into the macroeconomy. 
+
+At the macroeconomic level, @Baker2016 find that rising uncertainty in the United States is a leading indicator for declining investment, production and employment. However, since the global financial crisis (GFC), most macroeconomic literature pertaining to uncertainty have been concerned with linkages to financial markets. @Caldara2016 go as far in stating that the interaction between uncertainty and financial shocks is "toxic" and that the GFC was likely due to an acute manifestation of this. Other scholars establish relationships between EPU and the equity option market [@Kelly2016], increased stock price volatility [@Baker2016] and increased risk premia [@Pastor2013]. 
+
+The above discussion illustrates the usefulness of a measure for EPU. It now remains to be ascertained how exactly to measure it. Earlier literature (see e.g. @Bachmann2013) made use of survey data and constructed an EPU index by measuring the discrepancies between respondents' answers to forward-looking questions. @Redl2015 takes an alternative approach, employing inter alia data from professional forecasting competitions and scrutinising official economic reviews released by the South African Reserve Bank to construct an EPU index.
+
+More recently, a novel approach by @Baker2016 garnered academic praise and an increasing number of scholars followed suit. The approach developed by @Baker2016 gauge EPU by extracting information from newspaper articles. The most basic index is constructed using the frequency of articles containing words related to uncertainty. Refinements on the basic index attempt to, inter alia, control for linguistic modality [@Tobback2018], eliminate the need for human classification of articles by using support vector machines [@Azqueta-Gavaldon2017] and provide a greater level of disaggregation in terms of policy categories [@Baker2016]. The methodologies of these papers are not discussed here as it overlaps greatly with the methodology discussed in section \ref{sec_method}.
+
+# Constructing an Economic Policy Uncertainty Index for South Africa \label{sec_EPU}
+
+## Data \label{sec_data}
+<!-- Discuss and motivate the choice of datasource - linking to the rationale above (uncertainty from whose viewpoint?) 
+descriptive statistics 
+NB also discuss the way in which raw data is obtained (talk to Hanjo)--> 
+
+## Methodology \label{sec_method}
+This paper presents two sets of indices - the naive and the refined - both following the same methodology. The delineating factor is the way in which the uncertainty score for each article is calculated. As such, this calculation for the respective indices is discussed before explaining the general methodology of constructing the indices.
+
+For the naive approach, the uncertainty score is simply a binary variable that is equal to one if the article contains the word "uncertain" at least once and zero otherwise. Albeit being able to quantify uncertainty to an extent, the naive index is rigid in its application. @Tobback2018 state that every article matching the aforementioned criteria forms part of the naive index, regardless of the entity that the uncertainty is related to. To control for this, the naive index is calculated for uncertainty pertaining to specific topics. This is achieved by identifying a subset of the articles.<-- I will elaborate on this point once I've indentified the categories that I am constructing the indices for e.g. finance, stock markets etc--> 
+
+A further shortcoming of the naive index is that articles are weighted equally, i.e. all articles containing the word "uncertain" contribute one towards the uncertainty score. In reality, there is a range of words that can convey uncertainty and not all articles convey the same level of uncertainty. Therefore, the refined uncertainty index evaluates the raw text data for words contained in the @Loughran2016 dictionary pertaining to uncertainty. In doing so, the uncertainty measure is a continuous variable and each article's contribution to the uncertainty score is proportional to this score. <--elaborate more on this method (frequency over wordcount) as well as the choice of dictionary -->
+
+Having demonstrated the different ways in which the naive- and refined approach measure the uncertainty score it can now be shown how these scores are translated into an index. As mentioned, the methodology to calculate the indices are the same and the only difference is the way that uncertainty is measured. As such the general methodology developed by @Baker2016 is explained below. 
+
+First, the subset of the data is identified by filtering the data to only articles containing the relevant word. The daily uncertainty score is then calculated by adding the scores for all the articles in the subset. Since the number of articles in the subset varies per day, the score is standardised by dividing by by the number of articles in the subset. The variance of the daily standardised score is then calculated for every month. Finally, the first month of the dataset is chosen as the reference period and subsequent months are standardised by dividing by the reference period.
+
+The above explanation can be framed mathematically as follows: 
+Denote an article as $a_{jit}$ and define its uncertainty score as $us_{jit}$ where $j$ denotes the article, $i$ the day and $t$ the month. The uncertainty score per article is aggregated to obtain the daily uncertainty score, $\sum_{j=1}^J us_{jit} = US_{it}$. The standardised score is calculated by dividing this by the total articles pertaining to a certain topic published on a day, $X_{it}=\frac{US_{it}}{\sum_{j=1}^J a_{jit}}$. Finally, the variance is calculated by month and scaled by the first month to obtain the index value for each month, $index = \frac{var(X_t)}{var(X_0)}$. 
+
+## Results \label{sec_results}
+
+# The evolution of Economic Policy Uncertainty in South Africa \label{sec_discuss}
+
+<!--Validation of results. NB section: Provide a descriptive narrative of the evolution of uncertainty in SA --> 
+# Conclusion \label{sec_conclude}
+
+
+
+\newpage
+
+# References
