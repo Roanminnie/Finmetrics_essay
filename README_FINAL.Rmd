@@ -455,3 +455,41 @@ write_rds(x = financial_refine, "data/financial_refine.rds")
 
 
 
+
+
+#Composite indices
+```{r}
+#Naive
+political_comp <- political_naive %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_mnth) %>% 
+  FactoMineR::PCA()
+
+political_comp_index <- political_comp$ind$coord[,1]
+
+ts.plot(political_comp_index)
+
+political_naive %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = political_comp_index) %>% 
+  gather(., type, value, -year_mnth) %>% 
+  ggplot(., aes(year_mnth, value, color = type, group = type)) + 
+  geom_line()
+
+#Refine
+political_comp <- political_refine %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_mnth) %>% 
+  FactoMineR::PCA()
+
+political_comp_index <- political_comp$ind$coord[,1]
+
+ts.plot(political_comp_index)
+
+political_refine %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = political_comp_index) %>% 
+  gather(., type, value, -year_mnth) %>% 
+  ggplot(., aes(year_mnth, value, color = type, group = type)) + 
+  geom_line()
+```
