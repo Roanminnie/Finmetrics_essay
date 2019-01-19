@@ -14,7 +14,7 @@ Loading the necessary packages
 if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
 if(!require("future")) install.packages("future")
 library(rmsfuns)
-load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr"))
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis"))
 ```
 Create the necessary folders
 ```{r}
@@ -195,6 +195,29 @@ write_rds(financial_small, "data/financial.rds")
 ```
 
 #Topic specific uncertainty indices
+##constructing complete datasets
+```{r}
+political <- readRDS("data/political.rds") 
+political_us <- political %>% 
+  mutate(naive_us = naive_raw$uncertain) %>% 
+  mutate(refine_us= refine_raw$uncertain)
+
+fiscal <- readRDS("data/fiscal.rds") 
+fiscal_us <- fiscal %>% 
+  mutate(naive_us = naive_raw$uncertain) %>% 
+  mutate(refine_us= refine_raw$uncertain)
+
+monetary <- readRDS("data/monetary.rds") 
+monetary_us <- monetary %>% 
+  mutate(naive_us = naive_raw$uncertain) %>% 
+  mutate(refine_us= refine_raw$uncertain)
+
+fincial <- readRDS("data/financial.rds") 
+financial_us <- financial %>% 
+  mutate(naive_us = naive_raw$uncertain) %>% 
+  mutate(refine_us= refine_raw$uncertain)
+```
+
 ##Political
 ```{r}
 criteria <- c("econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
@@ -384,11 +407,10 @@ write_rds(x = monetary_refine, "data/monetary_refine.rds")
 
 ##Finance
 ```{r}
-criteria <- c("econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+criteria <- c("econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "market", "JSE", "exchange", "rand")
 
 financial_us <- financial %>% 
   mutate(financ = naive_raw$financ) %>% 
-  mutate(stock = naive_raw$stock) %>% 
   mutate(market = naive_raw$market) %>% 
   mutate(JSE = naive_raw$JSE) %>% 
   mutate(exchange = naive_raw$exchange) %>% 
@@ -422,7 +444,7 @@ financial_naive <- tibble(criteria = criteria) %>%
   pull(outcome) %>% reduce(left_join, by = "year_month") %>%
   distinct 
 
-colnames(financial_naive) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+colnames(financial_naive) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "market", "JSE", "exchange", "rand")
 write_rds(x = financial_naive, "data/financial_naive.rds")
 
 
@@ -445,21 +467,42 @@ financial_refine <- tibble(criteria = criteria) %>%
   pull(outcome) %>% reduce(left_join, by = "year_month") %>%
   distinct 
 
-colnames(financial_refine) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "stock", "market", "JSE", "exchange", "rand")
+colnames(financial_refine) <- c("year_month", "econom", "policy", "debt", "sovereign", "rating", "credit","stock", "bond", "invest", "rate", "FDI", "bank", "financ", "market", "JSE", "exchange", "rand")
 
 write_rds(x = financial_refine, "data/financial_refine.rds")
 ```
 
 
 
-
-
-
-
-
 #Composite indices
+##Political
 ```{r}
+political_naive <- readRDS("data/political_naive.rds") 
 #Naive
+tmp <- political_naive%>% 
+  gather(., type, value, -year_mnth) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_mnth, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#69b3a2", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - naive Political index") +
+    facet_wrap(~type)
+
+ggsave("bin/pol_key_naive.jpeg")
+
+
 political_comp <- political_naive %>% 
   .[complete.cases(.),] %>% 
   select(-year_mnth) %>% 
@@ -467,29 +510,449 @@ political_comp <- political_naive %>%
 
 political_comp_index <- political_comp$ind$coord[,1]
 
-ts.plot(political_comp_index)
-
-political_naive %>% 
+political_naive <- political_naive %>% 
   .[complete.cases(.),] %>% 
-  mutate(composite = political_comp_index) %>% 
-  gather(., type, value, -year_mnth) %>% 
-  ggplot(., aes(year_mnth, value, color = type, group = type)) + 
-  geom_line()
+  mutate(composite = political_comp_index) 
+
+political_naive %>%
+  gather(., type, value, -year_mnth) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_mnth, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#69b3a2", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Political uncertainty in South Africa - naive index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/pol_comp_naive.jpeg")
+
 
 #Refine
-political_comp <- political_refine %>% 
+political_refine <- readRDS("data/political_refine.rds")
+tmp <- political_refine%>% 
+  gather(., type, value, -year_mnth) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_mnth, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#453781FF", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - refined Political index") +
+    facet_wrap(~type)
+
+ggsave("bin/pol_key_refine.jpeg")
+
+
+political_compr <- political_refine %>% 
   .[complete.cases(.),] %>% 
   select(-year_mnth) %>% 
   FactoMineR::PCA()
 
 political_comp_index <- political_comp$ind$coord[,1]
 
-ts.plot(political_comp_index)
-
-political_refine %>% 
+political_refine<- political_refine %>% 
   .[complete.cases(.),] %>% 
-  mutate(composite = political_comp_index) %>% 
-  gather(., type, value, -year_mnth) %>% 
-  ggplot(., aes(year_mnth, value, color = type, group = type)) + 
-  geom_line()
+  mutate(composite = political_comp_index) 
+
+political_refine %>%
+  gather(., type, value, -year_mnth) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_mnth, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#453781FF", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Political uncertainty in South Africa - refined index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/pol_comp_refine.jpeg")
 ```
+
+
+
+##Fiscal
+```{r}
+fiscal_naive <- readRDS("data/fiscal_naive.rds") 
+#Naive
+tmp <- fiscal_naive%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#6b4596ff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - naive Fiscal Policy index") +
+    facet_wrap(~type)
+
+ggsave("bin/fiscal_key_naive.jpeg")
+
+
+fiscal_comp <- fiscal_naive %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+fiscal_comp_index <- fiscal_comp$ind$coord[,1]
+
+fiscal_naive <- fiscal_naive %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = fiscal_comp_index) 
+
+fiscal_naive %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#6b4596ff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Fiscal Policy uncertainty in South Africa - naive index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/fiscal_comp_naive.jpeg")
+
+
+#Refine
+fiscal_refine <- readRDS("data/fiscal_refine.rds")
+tmp <- fiscal_refine%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#eb8055ff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - refined Fiscal Policy index") +
+    facet_wrap(~type)
+
+ggsave("bin/fiscal_key_refine.jpeg")
+
+
+fiscal_comp <- fiscal_refine %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+fiscal_comp_index <- fiscal_comp$ind$coord[,1]
+
+fiscal_refine<- fiscal_refine %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = fiscal_comp_index) 
+
+fiscal_refine %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#eb8055ff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Fiscal Policy uncertainty in South Africa - refined index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/fiscal_comp_refine.jpeg")
+```
+
+
+
+##Monetary
+```{r}
+monetary_naive <- readRDS("data/monetary_naive.rds") 
+#Naive
+tmp <- monetary_naive%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#31668dff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - naive Monetary Policy index") +
+    facet_wrap(~type)
+
+ggsave("bin/monetary_key_naive.jpeg")
+
+
+monetary_comp <- monetary_naive %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+monetary_comp_index <- monetary_comp$ind$coord[,1]
+
+monetary_naive <- monetary_naive %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = monetary_comp_index) 
+
+monetary_naive %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#31668dff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Monetary Policy uncertainty in South Africa - naive index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/monetary_comp_naive.jpeg")
+
+
+#Refine
+monetary_refine <- readRDS("data/monetary_refine.rds")
+tmp <- monetary_refine%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#6dcc58ff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - refined Monetary Policy index") +
+    facet_wrap(~type)
+
+ggsave("bin/monetary_key_refine.jpeg")
+
+
+monetary_comp <- monetary_refine %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+monetary_comp_index <- monetary_comp$ind$coord[,1]
+
+monetary_refine<- monetary_refine %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = monetary_comp_index) 
+
+monetary_refine %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#6dcc58ff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Monetary Policy uncertainty in South Africa - refined index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/monetary_comp_refine.jpeg")
+```
+##Fiancial
+```{r}
+financial_naive <- readRDS("data/financial_naive.rds") 
+#Naive
+tmp <- financial_naive%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#472775ff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - naive F inancial index") +
+    facet_wrap(~type)
+
+ggsave("bin/financial_key_naive.jpeg")
+
+
+financial_comp <- financial_naive %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+financial_comp_index <- financial_comp$ind$coord[,1]
+
+financial_naive <- financial_naive %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = financial_comp_index) 
+
+financial_naive %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#472775ff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Financial uncertainty in South Africa - naive index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/financial_comp_naive.jpeg")
+
+
+#Refine
+financial_refine <- readRDS("data/financial_refine.rds")
+tmp <- financial_refine%>% 
+  gather(., type, value, -year_month) %>% 
+  mutate(type2 = type) 
+  
+
+tmp %>%
+  ggplot( aes(x=year_month, y=value, group = 1)) +
+    geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
+    geom_line( aes(color=type), color="#b0dd31ff", size=1 )+
+    scale_color_viridis(discrete = TRUE) +
+    scale_x_discrete(breaks = c("2004-01","2005-01","2006-01","2007-01","2008-01","2009-01","2010-01","2011-01","2012-01","2013-01","2014-01","2015-01","2016-01", "2017-01"))+
+    theme_base() +
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      panel.grid = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ) +
+    ggtitle("Evolution of uncertainty by keyword - refined Financial index") +
+    facet_wrap(~type)
+
+ggsave("bin/financial_key_refine.jpeg")
+
+
+financial_comp <- financial_refine %>% 
+  .[complete.cases(.),] %>% 
+  select(-year_month) %>% 
+  FactoMineR::PCA()
+
+financial_comp_index <- financial_comp$ind$coord[,1]
+
+financial_refine<- financial_refine %>% 
+  .[complete.cases(.),] %>% 
+  mutate(composite = financial_comp_index) 
+
+financial_refine %>%
+  gather(., type, value, -year_month) %>%
+  mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
+    geom_line() +
+    scale_color_manual(values = c("#b0dd31ff", "grey")) +
+    scale_size_manual(values=c(1.5,0.2)) +
+    theme(legend.position="none") +
+    ggtitle("Evolution of Financial uncertainty in South Africa - refined index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90)
+)
+
+ggsave("bin/financial_comp_refine.jpeg")
+```
+
+#Postestimation analysis
+```{r}
+political_naive <- readRDS("data/political_naive.rds") 
+political_comp <- political_naive %>% 
+  select(-year_mnth) %>% 
+  FactoMineR::PCA()
+
+political_comp_indexn <- political_comp$ind$coord[,1]
+
+political_refine <- readRDS("data/political_refine.rds") 
+political_comp <- political_refine %>% 
+  select(-year_mnth) %>% 
+  FactoMineR::PCA()
+
+political_comp_index <- political_comp$ind$coord[,1]
+
+political_comps<- political_naive %>% 
+  select(year_mnth) %>% 
+  mutate(naive = political_comp_indexn) %>% 
+  mutate(refine = political_comp_index)
+```
+
