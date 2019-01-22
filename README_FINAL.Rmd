@@ -14,7 +14,7 @@ Loading the necessary packages
 if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
 if(!require("future")) install.packages("future")
 library(rmsfuns)
-load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis"))
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate"))
 ```
 Create the necessary folders
 ```{r}
@@ -200,22 +200,18 @@ write_rds(financial_small, "data/financial.rds")
 political <- readRDS("data/political.rds") 
 political_us <- political %>% 
   mutate(naive_us = naive_raw$uncertain) %>% 
-  mutate(refine_us= refine_raw$uncertain)
+  mutate(refine_us= (refine_raw$uncertain)*(-1))
 
 fiscal <- readRDS("data/fiscal.rds") 
 fiscal_us <- fiscal %>% 
   mutate(naive_us = naive_raw$uncertain) %>% 
-  mutate(refine_us= refine_raw$uncertain)
+  mutate(refine_us= (refine_raw$uncertain)*(-1))
 
 monetary <- readRDS("data/monetary.rds") 
 monetary_us <- monetary %>% 
   mutate(naive_us = naive_raw$uncertain) %>% 
-  mutate(refine_us= refine_raw$uncertain)
+  mutate(refine_us= (refine_raw$uncertain)*(-1))
 
-fincial <- readRDS("data/financial.rds") 
-financial_us <- financial %>% 
-  mutate(naive_us = naive_raw$uncertain) %>% 
-  mutate(refine_us= refine_raw$uncertain)
 ```
 
 ##Political
@@ -232,8 +228,7 @@ political_us %>%
   add_tally() %>% ungroup() %>% 
   select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
   group_by(PubDate) %>% 
-  mutate(sum_n = sum(naive_us)) %>% 
-  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  mutate(freq = mean(naive_us)) %>% ungroup() %>% 
   select(PubDate, year_month, freq) %>%
   unique() %>% 
   group_by(year_month) %>% 
@@ -248,7 +243,7 @@ political_naive <- tibble(criteria = criteria) %>%
   pull(outcome) %>% reduce(left_join, by = "year_month") %>%
   distinct 
 
-colnames(political_naive) <- c("year_mnth","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+colnames(political_naive) <- c("year_month","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
 
 write_rds(x = political_naive, "data/political_naive.rds")
 
@@ -259,9 +254,16 @@ fn_refine<- function(criteria){
 political_us %>% 
   filter(PubDate >="2004-01-01") %>% 
   filter(!!rlang::parse_quosure(criteria)=="1") %>% 
-  select(PubDate, year_month, refine_us) %>%
+    arrange(PubDate) %>% 
+    group_by(PubDate) %>%
+    add_tally() %>% ungroup() %>% 
+    select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, refine_us)%>%
+    group_by(PubDate) %>% 
+    mutate(freq = mean(refine_us)) %>%  ungroup() %>%
+    select(PubDate, year_month, freq) %>%
+    unique() %>% 
   group_by(year_month) %>% 
-  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
   mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
   select(year_month, uncertain) %>% 
   unique()
@@ -272,7 +274,7 @@ political_refine <- tibble(criteria = criteria) %>%
   pull(outcome) %>% reduce(left_join, by = "year_month") %>%
   distinct 
 
-colnames(political_refine) <- c("year_mnth","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
+colnames(political_refine) <- c("year_month","econom", "policy", "ANC", "party", "political", "president", "election","vote", "government", "parliament", "shuffle", "cabinet", "poll", "downgrade", "junk", "legislation", "rating", "credit")
 
 write_rds(x = political_refine, "data/political_refine.rds")
 
@@ -283,9 +285,6 @@ write_rds(x = political_refine, "data/political_refine.rds")
 ```{r}
 criteria <- c("econom", "policy", "fiscal","parliament","legislation", "minister", "budget", "financ", "speech", "government", "bill", "tax", "VAT", "downgrade", "debt", "sovereign", "rating", "credit","expenditure", "spending")
 
-fiscal_us <- fiscal %>% 
-  mutate(naive_us=naive_raw$uncertain) %>% 
-  mutate(refine_us=refine_raw$uncertain)
 
 #constructing the naive index per keyword in the fiscal category
 fn_naive<- function(criteria){
@@ -297,8 +296,7 @@ fiscal_us %>%
   add_tally() %>% ungroup() %>% 
   select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
   group_by(PubDate) %>% 
-  mutate(sum_n = sum(naive_us)) %>% 
-  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  mutate(freq = mean(naive_us)) %>%  ungroup() %>% 
   select(PubDate, year_month, freq) %>%
   unique() %>% 
   group_by(year_month) %>% 
@@ -324,9 +322,16 @@ fn_refine<- function(criteria){
 fiscal_us %>% 
   filter(PubDate >="2004-01-01") %>% 
   filter(!!rlang::parse_quosure(criteria)=="1") %>% 
-  select(PubDate, year_month, refine_us) %>%
+    arrange(PubDate) %>% 
+    group_by(PubDate) %>%
+    add_tally() %>% ungroup() %>% 
+    select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, refine_us)%>%
+    group_by(PubDate) %>% 
+    mutate(freq = mean(refine_us)) %>% ungroup() %>%
+    select(PubDate, year_month, freq) %>%
+    unique() %>% 
   group_by(year_month) %>% 
-  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
   mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
   select(year_month, uncertain) %>% 
   unique()
@@ -346,10 +351,6 @@ write_rds(x = fiscal_refine, "data/fiscal_refine.rds")
 ```{r}
 criteria <- c("econom", "policy", "price", "inflation", "monetary", "committee", "oil", "shock", "SARB", "interest", "rate", "repo", "review", "hike", "increase", "decrease", "lower")
 
-monetary_us <- monetary %>% 
-  mutate(naive_us=naive_raw$uncertain) %>% 
-  mutate(refine_us=refine_raw$uncertain)
-
 #constructing the naive index per keyword in the monetary category
 fn_naive<- function(criteria){
 monetary_us %>% 
@@ -360,8 +361,7 @@ monetary_us %>%
   add_tally() %>% ungroup() %>% 
   select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
   group_by(PubDate) %>% 
-  mutate(sum_n = sum(naive_us)) %>% 
-  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  mutate(freq = mean(naive_us)) %>% ungroup() %>% 
   select(PubDate, year_month, freq) %>%
   unique() %>% 
   group_by(year_month) %>% 
@@ -387,9 +387,16 @@ fn_refine<- function(criteria){
 monetary_us %>% 
   filter(PubDate >="2004-01-01") %>% 
   filter(!!rlang::parse_quosure(criteria)=="1") %>% 
-  select(PubDate, year_month, refine_us) %>%
+    arrange(PubDate) %>% 
+    group_by(PubDate) %>%
+    add_tally() %>% ungroup() %>% 
+    select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, refine_us)%>%
+    group_by(PubDate) %>% 
+    mutate(freq = mean(refine_us)) %>% ungroup() %>%
+    select(PubDate, year_month, freq) %>%
+    unique() %>% 
   group_by(year_month) %>% 
-  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
   mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
   select(year_month, uncertain) %>% 
   unique()
@@ -416,7 +423,7 @@ financial_us <- financial %>%
   mutate(exchange = naive_raw$exchange) %>% 
   mutate(rand = naive_raw$rand) %>% 
   mutate(naive_us=naive_raw$uncertain) %>% 
-  mutate(refine_us=refine_raw$uncertain)
+  mutate(refine_us= (refine_raw$uncertain)*(-1))
 
 #constructing the naive index per keyword in the monetary category
 fn_naive<- function(criteria){
@@ -428,8 +435,7 @@ financial_us %>%
   add_tally() %>% ungroup() %>% 
   select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, naive_us)%>% 
   group_by(PubDate) %>% 
-  mutate(sum_n = sum(naive_us)) %>% 
-  mutate(freq = sum_n/n) %>% ungroup() %>% 
+  mutate(freq = mean(naive_us)) %>% ungroup() %>% 
   select(PubDate, year_month, freq) %>%
   unique() %>% 
   group_by(year_month) %>% 
@@ -454,9 +460,16 @@ fn_refine<- function(criteria){
 financial_us %>% 
   filter(PubDate >="2004-01-01") %>% 
   filter(!!rlang::parse_quosure(criteria)=="1") %>% 
-  select(PubDate, year_month, refine_us) %>%
+    arrange(PubDate) %>% 
+    group_by(PubDate) %>%
+    add_tally() %>% ungroup() %>% 
+    select(PubDate, year_month, !!rlang::parse_quosure(criteria), n, refine_us)%>%
+    group_by(PubDate) %>% 
+    mutate(freq = mean(refine_us)) %>% ungroup() %>%
+    select(PubDate, year_month, freq) %>%
+    unique() %>% 
   group_by(year_month) %>% 
-  summarise(uncertain = mean(refine_us, na.rm = T)) %>% 
+  summarise(uncertain = mean(freq, na.rm = T)) %>% 
   mutate(uncertain = scale(uncertain)) %>% ungroup() %>% 
   select(year_month, uncertain) %>% 
   unique()
@@ -480,12 +493,12 @@ write_rds(x = financial_refine, "data/financial_refine.rds")
 political_naive <- readRDS("data/political_naive.rds") 
 #Naive
 tmp <- political_naive%>% 
-  gather(., type, value, -year_mnth) %>% 
+  gather(., type, value, -year_month) %>% 
   mutate(type2 = type) 
   
 
 tmp %>%
-  ggplot( aes(x=year_mnth, y=value, group = 1)) +
+  ggplot( aes(x=year_month, y=value, group = 1)) +
     geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
     geom_line( aes(color=type), color="#69b3a2", size=1 )+
     scale_color_viridis(discrete = TRUE) +
@@ -505,7 +518,7 @@ ggsave("bin/pol_key_naive.jpeg")
 
 political_comp <- political_naive %>% 
   .[complete.cases(.),] %>% 
-  select(-year_mnth) %>% 
+  select(-year_month) %>% 
   FactoMineR::PCA()
 
 political_comp_index <- political_comp$ind$coord[,1]
@@ -515,9 +528,9 @@ political_naive <- political_naive %>%
   mutate(composite = political_comp_index) 
 
 political_naive %>%
-  gather(., type, value, -year_mnth) %>%
+  gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
-  ggplot( aes(x=year_mnth, y=value, group=type, color=highlight, size=highlight)) +
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
     geom_line() +
     scale_color_manual(values = c("#69b3a2", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
@@ -536,12 +549,12 @@ ggsave("bin/pol_comp_naive.jpeg")
 #Refine
 political_refine <- readRDS("data/political_refine.rds")
 tmp <- political_refine%>% 
-  gather(., type, value, -year_mnth) %>% 
+  gather(., type, value, -year_month) %>% 
   mutate(type2 = type) 
   
 
 tmp %>%
-  ggplot( aes(x=year_mnth, y=value, group = 1)) +
+  ggplot( aes(x=year_month, y=value, group = 1)) +
     geom_line( data=tmp %>% dplyr::select(-type), aes(group=type2), color="grey", size=0.5, alpha=0.5) +
     geom_line( aes(color=type), color="#453781FF", size=1 )+
     scale_color_viridis(discrete = TRUE) +
@@ -559,9 +572,9 @@ tmp %>%
 ggsave("bin/pol_key_refine.jpeg")
 
 
-political_compr <- political_refine %>% 
+political_comp <- political_refine %>% 
   .[complete.cases(.),] %>% 
-  select(-year_mnth) %>% 
+  select(-year_month) %>% 
   FactoMineR::PCA()
 
 political_comp_index <- political_comp$ind$coord[,1]
@@ -571,9 +584,9 @@ political_refine<- political_refine %>%
   mutate(composite = political_comp_index) 
 
 political_refine %>%
-  gather(., type, value, -year_mnth) %>%
+  gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
-  ggplot( aes(x=year_mnth, y=value, group=type, color=highlight, size=highlight)) +
+  ggplot( aes(x=year_month, y=value, group=type, color=highlight, size=highlight)) +
     geom_line() +
     scale_color_manual(values = c("#453781FF", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
@@ -936,23 +949,62 @@ ggsave("bin/financial_comp_refine.jpeg")
 
 #Postestimation analysis
 ```{r}
-political_naive <- readRDS("data/political_naive.rds") 
-political_comp <- political_naive %>% 
-  select(-year_mnth) %>% 
-  FactoMineR::PCA()
+political_comps <-  political_naive %>% 
+  select(year_month) %>%
+  mutate(naive = political_naive$composite) %>% 
+  mutate(refined= political_refine$composite) %>% 
+  gather(., index, value, -year_month)
+write_rds(political_comps, "data/political_comps.rds")
 
-political_comp_indexn <- political_comp$ind$coord[,1]
+j <- political_comps %>%
+  ggplot(aes(x=year_month, y=value, group=index, color = index)) +
+  geom_line(aes(size = index))+
+    scale_size_manual(values=c(0.2, 1.5)) +
+    scale_color_manual(values = c("grey","#453781FF"))+
+    theme(legend.position="none") +
+    ggtitle("Naive- and refined political uncertainty index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90) 
+      )
+j+ geom_rect(data=data.frame(xmin=decimal_date(as.Date(c("2007-11"), format = "%Y-%m")),
+                            xmax=decimal_date(as.Date(c("2009-12"), format = "%Y-%m")),
+                            ymin=-Inf,
+                            ymax=Inf
+                            ))
 
-political_refine <- readRDS("data/political_refine.rds") 
-political_comp <- political_refine %>% 
-  select(-year_mnth) %>% 
-  FactoMineR::PCA()
 
-political_comp_index <- political_comp$ind$coord[,1]
 
-political_comps<- political_naive %>% 
-  select(year_mnth) %>% 
-  mutate(naive = political_comp_indexn) %>% 
-  mutate(refine = political_comp_index)
+```
+
+
+```{r}
+test <-political_refine %>% 
+  select(year_month, composite) 
+
+j <- test %>%
+  ggplot(aes(x=year_month, y=composite, group = 1), inherit.aes = FALSE) +
+  geom_line()+
+    theme(legend.position="none") +
+    ggtitle("Naive- and refined political uncertainty index") +
+    theme_base()+
+    theme(
+      legend.position="none",
+      plot.title = element_text(size=14),
+      axis.text.x = element_text(angle = 90) 
+      )
+j+ geom_rect(data=data.frame(xmin=decimal_date(as.Date(c("2007-11"), format = "%Y-%m")),
+                            xmax=decimal_date(as.Date(c("2009-12"), format = "%Y-%m")),
+                            ymin=-Inf,
+                            ymax=Inf
+                            ))
+
+```
+
+
+```{r}
+parallel::stopCluster(cl)
 ```
 
