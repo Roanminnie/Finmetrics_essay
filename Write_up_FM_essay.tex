@@ -300,11 +300,46 @@ categories (Baker, Bloom, and Davis
 papers are not discussed here as it overlaps greatly with the
 methodology discussed in section \ref{sec_method}.
 
-\section{\texorpdfstring{Constructing an Economic Policy Uncertainty
-Index for South Africa
-\label{sec_EPU}}{Constructing an Economic Policy Uncertainty Index for South Africa }}\label{constructing-an-economic-policy-uncertainty-index-for-south-africa}
+\section{\texorpdfstring{Constructing a set of Uncertainty Indices for
+South Africa
+\label{sec_EPU}}{Constructing a set of Uncertainty Indices for South Africa }}\label{constructing-a-set-of-uncertainty-indices-for-south-africa}
 
 \subsection{\texorpdfstring{Data \label{sec_data}}{Data }}\label{data}
+
+The aim of this paper is to capture uncertainty in the South African
+economy as reported by newspaper articles. The aim is to provide a set
+of indices describing the evolution of uncertainty which can be used to
+uncover relationships such as those reviewed in section
+\ref{sec_litreview}. This requires that any potential data sources meets
+a set of criteria. First, the sources have to be South African and cover
+predominantly South African events. Second, the sources have to be
+available for a significant period so as to be able to extract the
+evolution of uncertainty over time. Finally and most importantly, the
+articles forming part of any potential data source have to reach a large
+proportion of the economic decisionmakers. This criterium improves the
+probabality of observing the type of relationships reviewed in section
+\ref{sec_litreview}.
+
+From all the potential data sources available, Sabinet meets all the
+requirements stemming from the aim of this paper. PDFs containing
+digital scans of articles in three newspapers were downloaded from the
+Sabinet online database. These files were converted to raw text format
+using \textsc{pdftools}. The final dataset comprises 178688 articles in
+three South African newspapers from January 2004 till October 2017. The
+\emph{Business Day} newspaper constitutes the largest contribution with
+117169 articles, the \emph{Sowetan} 37403 articles and the
+\emph{Financial Mail} the remaining 24116 articles.
+
+These newspapers represent a large readership throughout South Africa.
+The \emph{Sowetan} is by far the biggest newspaper out of the three,
+having an exclusive readership of around 500 000. The
+\emph{Business Day} can be considered the most read newspaper aimed at
+financial matters and has a readership of approximately 80 000. The
+smallest of the three, the \emph{Financial Mail}, is a very concentrated
+newspaper with a key focus in the financial, investment and political
+space. It's readership hovers around 40 000. All of these newspaper fall
+under a publishing house called the Tiso Blackstar Group which
+specialises in print and digital media products.
 
 \subsection{\texorpdfstring{Methodology
 \label{sec_method}}{Methodology }}\label{methodology}
@@ -419,7 +454,7 @@ A daily uncertainty score is calculated as the mean score of the
 articles in the filtered data subset\footnote{Calculating the mean
   controls for the volume of articles varying per day.}. The daily
 uncertainty is aggregated to a monthly score by once again calculating
-the mean of the daily uncertiaty scores. Finally, the monthly
+the mean of the daily uncertainty scores. Finally, the monthly
 uncertainty score is scaled which provides the index.
 
 The above explanation can be framed mathematically as follows: Denote an
@@ -428,7 +463,8 @@ where \(j\) denotes the article, \(i\) the day and \(t\) the month. The
 mean uncertainty score per article constitutes the daily uncertainty
 score, \(\frac{\sum_{j=1}^Jus_{jit}}{J}= US_{it}\). The monthly score is
 calculated as the mean of the daily uncertainty scores per month,
-\(\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}\).
+\(\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}\). The scaled version of this
+makes out the final index.
 
 \section{\texorpdfstring{The evolution of Economic Policy Uncertainty in
 South Africa
