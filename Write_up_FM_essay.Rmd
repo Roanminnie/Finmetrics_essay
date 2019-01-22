@@ -72,6 +72,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.width 
 
 # Introduction \label{sec_intro}
 The aim of this paper is to provide a descriptive narrative of economic policy uncertainty in South Africa since ... To this end, an EPU index is constructed using text data from online news sources. 
+One of the aims is to provide a
 
 # Economic policy uncertainty in existing literature \label{sec_litreview}
 Existing literature provide several definitions of uncertainty. In general terms, @Jurado2015 define uncertainty as volatility in shocks that cannot be forecasted by economic agents. @Bloom2014 echo this by describing uncertainty as a concept that occupies the minds of agents in relation to possible future events. More specifically, @Baker2016 define economic policy uncertainty not only as uncertainty about policies as such, but also about who is making policy decisions and the effects thereof. It is important to note that uncertainty is defined in terms of all agents in the economy - as stated by @Bloom2014 - consumers, managers and policymakers. The remainder of this paper will thus refer to EPU at this aggregated level. 
@@ -94,20 +95,59 @@ descriptive statistics
 NB also discuss the way in which raw data is obtained (talk to Hanjo)--> 
 
 ## Methodology \label{sec_method}
-This paper presents two sets of indices - the naive and the refined - both following the same methodology. The delineating factor is the way in which the uncertainty score for each article is calculated. As such, this calculation for the respective indices is discussed before explaining the general methodology of constructing the indices.
+In order to build an uncertainty index, the newspaper articles discussed in section \ref{sec_data} is scrutinised. This paper presents two sets of indices - the naive and the refined - both following the same methodology. The delineating factor is the way in which the uncertainty score for each article is calculated. As such, this calculation for the respective uncertainty scores is discussed before explaining the general methodology of constructing the indices.
 
-For the naive approach, the uncertainty score is simply a binary variable that is equal to one if the article contains the word "uncertain" at least once and zero otherwise. Albeit being able to quantify uncertainty to an extent, the naive index is rigid in its application. @Tobback2018 state that every article matching the aforementioned criteria forms part of the naive index, regardless of the entity that the uncertainty is related to. To control for this, the naive index is calculated for uncertainty pertaining to specific topics. This is achieved by identifying a subset of the articles.<-- I will elaborate on this point once I've indentified the categories that I am constructing the indices for e.g. finance, stock markets etc--> 
+### Calculating uncertainty scores \label{ss_uncertaintyscore}
 
-A further shortcoming of the naive index is that articles are weighted equally, i.e. all articles containing the word "uncertain" contribute one towards the uncertainty score. In reality, there is a range of words that can convey uncertainty and not all articles convey the same level of uncertainty. Therefore, the refined uncertainty index evaluates the raw text data for words contained in the @Loughran2016 dictionary pertaining to uncertainty. In doing so, the uncertainty measure is a continuous variable and each article's contribution to the uncertainty score is proportional to this score. <--elaborate more on this method (frequency over wordcount) as well as the choice of dictionary -->
+For the naive approach, the uncertainty score is simply a binary variable that is equal to one if the article contains the word "uncertain" at least once and zero otherwise. Albeit being able to quantify uncertainty to an extent, the naive index is rigid in its application. @Tobback2018 state that every article matching the aforementioned criteria forms part of the naive index, regardless of the entity that the uncertainty is related to. To control for this, the naive index is calculated for uncertainty pertaining to specific topics. This is achieved by identifying a subset of the articles pertaining to specific topics. This is discussed in further detail in section \ref{ss_topics}. 
 
-Having demonstrated the different ways in which the naive- and refined approach measure the uncertainty score it can now be shown how these scores are translated into an index. As mentioned, the methodology to calculate the indices are the same and the only difference is the way that uncertainty is measured. As such the general methodology developed by @Baker2016 is explained below. 
+A further shortcoming of the naive index is that articles are weighted equally, i.e. all articles containing the word "uncertain" contribute one towards the uncertainty score. In reality, there is a range of words that can convey uncertainty and not all articles convey the same level of uncertainty. Therefore, the refined uncertainty index evaluates the raw text data for words contained in the @Loughran2016 uncertainty dictionary. This dictionary consists of 297 words relating to uncertainty and thus provides a more comparitive measure of sentiment [@Loughran2016]. Measuring the score in this manner yields a continuous variable with each article's contribution to the monthly uncertainty score equivalent to this score. 
 
-First, the subset of the data is identified by filtering the data to only articles containing the relevant word. The daily uncertainty score is then calculated by adding the scores for all the articles in the subset. Since the number of articles in the subset varies per day, the score is standardised by dividing by by the number of articles in the subset. The variance of the daily standardised score is then calculated for every month. Finally, the first month of the dataset is chosen as the reference period and subsequent months are standardised by dividing by the reference period.
+### Identifying topic specific uncertainty \label{ss_topics}
+This paper presents four sets of uncertainty indices - monetary policy, fiscal policy, financial markets and political uncertainty. To identify each of these topics, the articles are searched for a set of keywords pertaining to each topic. These keywords, displayed in table \ref{tbl_keywords}, were decided based on a combination of existing literature (inter alia @Hardouvelis2018 and @Redl2015) and own initiatives. Only articles that contain at least one of the keywords are included in the subset for the calculation of a specific index.
+
+\begin{table}[H]
+\caption{Keywords per Index category \label{tbl_keywords}} 
+\centering
+\begin{tabular}{rllll}
+  \hline
+ & Monetary Policy & Fiscal Policy & Financial markets & Political \\ 
+  \hline
+1 & Econom & Econom & Econom & Econom \\ 
+  2 & policy & policy & policy & policy \\ 
+  3 & price & fiscal & debt & ANC \\ 
+  4 & inflation & parliament & financ & party \\ 
+  5 & monetary & legislation & stock & political \\ 
+  6 & committee & minister & JSE & president \\ 
+  7 & oil & budget & market & election \\ 
+  8 & shock & financ & exchange & vote \\ 
+  9 & SARB & speech & rand & government \\ 
+  10 & interest & government & interest & parliament \\ 
+  11 & rate & bill & bank & shuffle \\ 
+  12 & repo & tax & bond & cabinet \\ 
+  13 & review & VAT & invest & poll \\ 
+  14 & hike & downgrade & rate & downgrade \\ 
+  15 & increase & debt & FDI & junk \\ 
+  16 & decrease & rating & sovereign & legislation \\ 
+  17 & lower & credit & rating & rating \\ 
+  18 &  & expenditure & credit & credit \\ 
+  19 &  & spending &  &  \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+### Constructing the indices \label{ss_indices}
+
+Having demonstrated the different ways in which the naive- and refined approach measure the uncertainty score and how topic specific data subsets are identified, it is now shown how these scores are translated into an index. As mentioned, the methodology to calculate the naive- and refined index are exactly the same. The only difference between the two types of indices, is the way in which the uncertainty score is measured as illustrated in section \ref{ss_uncertaintyscore}. As such the general methodology as developed by @Baker2016 is explained. 
+
+To ease the discussion, the explanation will focus on the monetary policy uncertainty index^[This is of course arbitrary and all four indices are constructed in the same manner.]. As alluded to earlier, the monetary policy data subset is defined so as to contain only articles with at least one of the keywords of the monetary policy category, i.e. one of the 17 keywords in table \ref{tbl_keywords}. From this data subset, 17 individual subindices are constructed - a subindex for every keyword. This is achieved by applying an additional filter on the data subset: working sequentially, the data subset is filtered to articles containing one keyword at a time. This step thus provides 17 filtered data subsets that relate to each of the 17 keywords in the monetary policy uncertainty category. 
+
+A daily uncertainty score is calculated as the mean score of the articles in the filtered data subset^[Calculating the mean controls for the volume of articles varying per day.]. The daily uncertainty is aggregated to a monthly score by once again calculating the mean of the daily uncertiaty scores. Finally, the monthly uncertainty score is scaled which provides the index.
 
 The above explanation can be framed mathematically as follows: 
-Denote an article as $a_{jit}$ and define its uncertainty score as $us_{jit}$ where $j$ denotes the article, $i$ the day and $t$ the month. The uncertainty score per article is aggregated to obtain the daily uncertainty score, $\sum_{j=1}^J us_{jit} = US_{it}$. The standardised score is calculated by dividing this by the total articles pertaining to a certain topic published on a day, $X_{it}=\frac{US_{it}}{\sum_{j=1}^J a_{jit}}$. Finally, the variance is calculated by month and scaled by the first month to obtain the index value for each month, $index = \frac{var(X_t)}{var(X_0)}$. 
+Denote an article as $a_{jit}$ and define its uncertainty score as $us_{jit}$ where $j$ denotes the article, $i$ the day and $t$ the month. The mean uncertainty score per article constitutes the daily uncertainty score, $\frac{\sum_{j=1}^Jus_{jit}}{J}= US_{it}$. The monthly score is calculated as the mean of the daily uncertainty scores per month, $\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}$.  
 
-## Results \label{sec_results}
 
 # The evolution of Economic Policy Uncertainty in South Africa \label{sec_discuss}
 
@@ -119,3 +159,16 @@ Denote an article as $a_{jit}$ and define its uncertainty score as $us_{jit}$ wh
 \newpage
 
 # References
+
+
+
+
+
+
+
+
+
+
+
+
+
