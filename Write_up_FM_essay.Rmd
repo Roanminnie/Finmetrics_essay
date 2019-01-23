@@ -94,7 +94,7 @@ The aim of this paper is to capture uncertainty in the South African economy as 
 
 From all the potential data sources available, Sabinet meets all the requirements stemming from the aim of this paper. PDFs containing digital scans of articles in three newspapers were downloaded from the Sabinet online database. These files were converted to raw text format using \textsc{pdftools}. The final dataset comprises 178688 articles in three South African newspapers from January 2004 till October 2017. The \emph{Business Day} newspaper constitutes the largest contribution with 117169 articles, the \emph{Sowetan} 37403 articles and the \emph{Financial Mail} the remaining 24116 articles. 
 
-These newspapers represent a large readership throughout South Africa. The \emph{Sowetan} is by far the biggest newspaper out of the three, having an exclusive readership of around 500 000. The \emph{Business Day} can be considered the most read newspaper aimed at financial matters and has a readership of approximately 80 000. The smallest of the three, the \emph{Financial Mail}, is a very concentrated newspaper with a key focus in the financial, investment and political space. It’s readership hovers around 40 000. All of these newspaper fall under a publishing house called the Tiso Blackstar Group which specialises in print and digital media products.
+These newspapers represent a large readership throughout South Africa. The \emph{Sowetan} is by far the biggest newspaper out of the three, having an exclusive readership of around 500 000. The \emph{Business Day} can be considered the most read newspaper aimed at financial matters and has a readership of approximately 80 000. The smallest of the three, the \emph{Financial Mail}, is a very concentrated newspaper with a key focus in the financial, investment and political space. It's readership hovers around 40 000. All of these newspaper fall under a publishing house called the Tiso Blackstar Group which specialises in print and digital media products.
 
 ## Methodology \label{sec_method}
 In order to build an uncertainty index, the newspaper articles discussed in section \ref{sec_data} is scrutinised. This paper presents two sets of indices - the naive and the refined - both following the same methodology. The delineating factor is the way in which the uncertainty score for each article is calculated. As such, this calculation for the respective uncertainty scores is discussed before explaining the general methodology of constructing the indices.
@@ -150,10 +150,30 @@ A daily uncertainty score is calculated as the mean score of the articles in the
 The above explanation can be framed mathematically as follows: 
 Denote an article as $a_{jit}$ and define its uncertainty score as $us_{jit}$ where $j$ denotes the article, $i$ the day and $t$ the month. The mean uncertainty score per article constitutes the daily uncertainty score, $\frac{\sum_{j=1}^Jus_{jit}}{J}= US_{it}$. The monthly score is calculated as the mean of the daily uncertainty scores per month, $\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}$. The scaled version of this makes out the final index.  
 
+<!-- Discussion of composite index -->
+
+##Results \label{sec_results}
+
+<!-- Include graphs here and discuss how they are constructed 
+Also discuss the fit of the principal components and the validity of the composite indices-->
+
 
 # The evolution of Economic Policy Uncertainty in South Africa \label{sec_discuss}
+The four refined composite indices in section \ref{sec_results} provide a unique way to represent the evolution of policy uncertainty in South Africa. For several periods, one can observe similar spikes in uncertainty in each of the four topics. As such, uncertainty is described along the lines of events clustered by periods across topics. 
 
-<!--Validation of results. NB section: Provide a descriptive narrative of the evolution of uncertainty in SA --> 
+
+##December 2007 to December 2009 
+
+##September 2015 to July 2017
+According to all four indices, uncertainty in South Africa peaked from the end of the third quarter of 2015 to the second quarter of 2017. 
+
+The last four months of 2015 was characterised by extreme political volatility in South Africa. The period started out with uncertainty about the Monetary Policy Committee's decision regarding the instrument rate. Amid unfavourable economic conditions such as high unemployment, \emph{Fees must Fall} and wage inequality strikes and concerns about rising debt levels, it was not sure whether the MPC will increase the repo rate or leave it unchanged. These conditions were also a source of uncertainty as newspapers speculated about the impact of the economic downturn. In this period, the news was also dominated by uncertainty regarding the future of electricity supply in South Africa. In particular, the discussions in parliament regarding the proposed nuclear programme enjoyed extensive coverage in the news. 
+
+One big event causes all four indices to show the biggest spike in uncertainty at the end of 2015: the replacement of Minister of Finance Nhlanhla Nene, with a relatively unknown figure, David van Rooyen. This shock came amid already rising concerns for a credit ratings downgrade. The nuclear procurement programme was approved by cabinet shortly after the replacement of Nene as minister. Giving in to mounting pressure from various agents, President Jacob Zuma replaced David van Rooyen with Pravin Gordhan after only four days as finance minister. This went a long way in lowering uncertainty in the subsequent month, but the level of uncertainty remained high for 2016 and 2017 compared to before September 2015. 
+
+In 2016, \emph{Fees must Fall} protests continue with the start of the academic year as more 
+
+
 # Conclusion \label{sec_conclude}
 
 

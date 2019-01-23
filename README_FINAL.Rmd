@@ -14,7 +14,7 @@ Loading the necessary packages
 if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
 if(!require("future")) install.packages("future")
 library(rmsfuns)
-load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate"))
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate", "zoo"))
 ```
 Create the necessary folders
 ```{r}
@@ -527,6 +527,8 @@ political_naive <- political_naive %>%
   .[complete.cases(.),] %>% 
   mutate(composite = political_comp_index) 
 
+write_rds(political_naive, "data/pol_naive_pe.rds")
+
 political_naive %>%
   gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
@@ -581,7 +583,9 @@ political_comp_index <- political_comp$ind$coord[,1]
 
 political_refine<- political_refine %>% 
   .[complete.cases(.),] %>% 
-  mutate(composite = political_comp_index) 
+  mutate(composite = political_comp_index)
+
+write_rds(political_refine, "data/pol_refine_pe.rds")
 
 political_refine %>%
   gather(., type, value, -year_month) %>%
@@ -643,6 +647,8 @@ fiscal_naive <- fiscal_naive %>%
   .[complete.cases(.),] %>% 
   mutate(composite = fiscal_comp_index) 
 
+write_rds(fiscal_naive, "data/fis_naive_pe.rds")
+
 fiscal_naive %>%
   gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
@@ -698,6 +704,8 @@ fiscal_comp_index <- fiscal_comp$ind$coord[,1]
 fiscal_refine<- fiscal_refine %>% 
   .[complete.cases(.),] %>% 
   mutate(composite = fiscal_comp_index) 
+
+write_rds(fiscal_refine, "data/fis_refine_pe.rds")
 
 fiscal_refine %>%
   gather(., type, value, -year_month) %>%
@@ -759,6 +767,8 @@ monetary_naive <- monetary_naive %>%
   .[complete.cases(.),] %>% 
   mutate(composite = monetary_comp_index) 
 
+write_rds(monetary_naive, "data/mon_naive_pe.rds")
+
 monetary_naive %>%
   gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
@@ -814,6 +824,8 @@ monetary_comp_index <- monetary_comp$ind$coord[,1]
 monetary_refine<- monetary_refine %>% 
   .[complete.cases(.),] %>% 
   mutate(composite = monetary_comp_index) 
+
+write_rds(monetary_refine, "data/mon_refine_pe.rds")
 
 monetary_refine %>%
   gather(., type, value, -year_month) %>%
@@ -872,6 +884,8 @@ financial_naive <- financial_naive %>%
   .[complete.cases(.),] %>% 
   mutate(composite = financial_comp_index) 
 
+write_rds(financial_naive, "data/fin_naive_pe.rds")
+
 financial_naive %>%
   gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
@@ -928,6 +942,8 @@ financial_refine<- financial_refine %>%
   .[complete.cases(.),] %>% 
   mutate(composite = financial_comp_index) 
 
+write_rds(financial_refine, "data/fin_refine_pe.rds")
+
 financial_refine %>%
   gather(., type, value, -year_month) %>%
   mutate( highlight=ifelse(type=="composite", "composite", "Other")) %>%
@@ -949,60 +965,180 @@ ggsave("bin/financial_comp_refine.jpeg")
 
 #Postestimation analysis
 ```{r}
-political_comps <-  political_naive %>% 
+pol_naive_pe <- readRDS("data/pol_naive_pe.rds")
+pol_refine_pe <- readRDS("data/pol_refine_pe.rds")
+fis_naive_pe <- readRDS("data/fis_naive_pe.rds")
+fis_refine_pe <- readRDS("data/fis_refine_pe.rds")
+mon_naive_pe <- readRDS("data/mon_naive_pe.rds")
+mon_refine_pe <- readRDS("data/mon_refine_pe.rds")
+fin_naive_pe <- readRDS("data/fin_naive_pe.rds")
+fin_refine_pe <- readRDS("data/fin_refine_pe.rds")
+```
+
+```{r Appendix graphs}
+political_comps <-  pol_naive_pe %>% 
   select(year_month) %>%
-  mutate(naive = political_naive$composite) %>% 
-  mutate(refined= political_refine$composite) %>% 
+  mutate(naive = pol_naive_pe$composite) %>% 
+  mutate(refined= pol_refine_pe$composite) %>% 
   gather(., index, value, -year_month)
+
 write_rds(political_comps, "data/political_comps.rds")
 
-j <- political_comps %>%
+
+rectangle1 <- data.frame(xmin = "2015-09",
+                        xmax = "2017-09",
+                        ymin = -Inf, ymax = Inf)
+
+rectangle2 <- data.frame(xmin = "2007-11",
+                        xmax = "2010-01",
+                        ymin = -Inf, ymax = Inf)
+
+political_comps %>%
   ggplot(aes(x=year_month, y=value, group=index, color = index)) +
+  geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#453781FF" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#453781FF" , alpha = 0.2,inherit.aes = FALSE )+
   geom_line(aes(size = index))+
-    scale_size_manual(values=c(0.2, 1.5)) +
-    scale_color_manual(values = c("grey","#453781FF"))+
-    theme(legend.position="none") +
-    ggtitle("Naive- and refined political uncertainty index") +
-    theme_base()+
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=14),
-      axis.text.x = element_text(angle = 90) 
-      )
-j+ geom_rect(data=data.frame(xmin=decimal_date(as.Date(c("2007-11"), format = "%Y-%m")),
-                            xmax=decimal_date(as.Date(c("2009-12"), format = "%Y-%m")),
-                            ymin=-Inf,
-                            ymax=Inf
-                            ))
+  scale_size_manual(values=c(0.2, 1.5)) +
+  scale_color_manual(values = c("grey","#453781FF"))+
+  theme(legend.position="none") +
+  ggtitle("Naive- and refined political uncertainty index") +
+  theme_base()+
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 90)
+  ) +
+  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+
+ggsave("bin/pol_comps.jpeg")
+  
+fiscal_comps <-  fis_naive_pe %>% 
+  select(year_month) %>%
+  mutate(naive = fis_naive_pe$composite) %>% 
+  mutate(refined= fis_refine_pe$composite) %>% 
+  gather(., index, value, -year_month)
+
+write_rds(fiscal_comps, "data/fiscal_comps.rds")
 
 
+fiscal_comps %>%
+  ggplot(aes(x=year_month, y=value, group=index, color = index)) +
+  geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#6b4596ff" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#6b4596ff" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_line(aes(size = index))+
+  scale_size_manual(values=c(0.2, 1.5)) +
+  scale_color_manual(values = c("grey","#6b4596ff"))+
+  theme(legend.position="none") +
+  ggtitle("Naive- and refined fiscal policy uncertainty index") +
+  theme_base()+
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 90)
+  ) +
+  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+
+ggsave("bin/fiscal_comps.jpeg")
+
+monetary_comps <-  mon_naive_pe %>% 
+  select(year_month) %>%
+  mutate(naive = mon_naive_pe$composite) %>% 
+  mutate(refined= mon_refine_pe$composite) %>% 
+  gather(., index, value, -year_month)
+
+write_rds(monetary_comps, "data/monetary_comps.rds")
+
+
+monetary_comps %>%
+  ggplot(aes(x=year_month, y=value, group=index, color = index)) +
+  geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#31668dff" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#31668dff" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_line(aes(size = index))+
+  scale_size_manual(values=c(0.2, 1.5)) +
+  scale_color_manual(values = c("grey","#31668dff"))+
+  theme(legend.position="none") +
+  ggtitle("Naive- and refined monetary policy uncertainty index") +
+  theme_base()+
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 90)
+  ) +
+  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+
+ggsave("bin/monetary_comps.jpeg")
+
+financial_comps <-  fin_naive_pe %>% 
+  select(year_month) %>%
+  mutate(naive = fin_naive_pe$composite) %>% 
+  mutate(refined= fin_refine_pe$composite) %>% 
+  gather(., index, value, -year_month)
+
+write_rds(financial_comps, "data/financial_comps.rds")
+
+
+financial_comps %>%
+  ggplot(aes(x=year_month, y=value, group=index, color = index)) +
+  geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#6dcc58ff", alpha = 0.2,inherit.aes = FALSE )+
+  geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
+              fill ="#6dcc58ff" , alpha = 0.2,inherit.aes = FALSE )+
+  geom_line(aes(size = index))+
+  scale_size_manual(values=c(0.2, 1.5)) +
+  scale_color_manual(values = c("grey","#6dcc58ff"))+
+  theme(legend.position="none") +
+  ggtitle("Naive- and refined fiancial uncertainty index") +
+  theme_base()+
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=14),
+    axis.text.x = element_text(angle = 90)
+  ) +
+  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+
+ggsave("bin/financial_comps.jpeg")
 
 ```
 
 
 ```{r}
-test <-political_refine %>% 
-  select(year_month, composite) 
+rawdata <- refine_raw %>% 
+  select(year_month, PubDate) %>% 
+  mutate(body = all_sabinet$article) %>% 
+  mutate(refine = (refine_raw$uncertain)*(-1)) %>% 
+  filter(year_month>="2004-01")
 
-j <- test %>%
-  ggplot(aes(x=year_month, y=composite, group = 1), inherit.aes = FALSE) +
-  geom_line()+
-    theme(legend.position="none") +
-    ggtitle("Naive- and refined political uncertainty index") +
-    theme_base()+
-    theme(
-      legend.position="none",
-      plot.title = element_text(size=14),
-      axis.text.x = element_text(angle = 90) 
-      )
-j+ geom_rect(data=data.frame(xmin=decimal_date(as.Date(c("2007-11"), format = "%Y-%m")),
-                            xmax=decimal_date(as.Date(c("2009-12"), format = "%Y-%m")),
-                            ymin=-Inf,
-                            ymax=Inf
-                            ))
+write_rds(rawdata, "data/postestimation.rds")
 
+first_cohort <- rawdata %>% 
+  filter(year_month<="2006-12" & year_month>="2004-06") %>% 
+  group_by(PubDate) %>%
+  mutate(us = mean(refine)) %>% ungroup() 
+
+second_cohort <- rawdata %>% 
+  filter(year_month<="2009-12" & year_month>="2007-12") %>% 
+  group_by(PubDate) %>%
+  mutate(us = mean(refine)) %>% ungroup() 
+
+third_cohort <- rawdata %>% 
+  filter(year_month<="2014-09" & year_month>="2013-10") %>% 
+  group_by(PubDate) %>%
+  mutate(us = mean(refine)) %>% ungroup() 
+
+fourth_cohort <- rawdata %>% 
+  filter(year_month<="2017-07" & year_month>="2015-09") %>% 
+  group_by(PubDate) %>%
+  mutate(us = mean(refine)) %>% ungroup() 
+
+
+temp<- fourth_cohort %>% filter(year_month=="2015-12") %>% select(year_month, PubDate, us) %>% unique() %>% arrange(us, decreasing=TRUE) %>% head(., n = 5) %>% arrange(PubDate)
 ```
-
 
 ```{r}
 parallel::stopCluster(cl)
