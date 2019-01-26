@@ -13,8 +13,9 @@ Loading the necessary packages
 ```{r}
 if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
 if(!require("future")) install.packages("future")
+if(!require("strucchange")) install.packages("strucchange")
 library(rmsfuns)
-load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate", "zoo"))
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate", "zoo", "strucchange"))
 ```
 Create the necessary folders
 ```{r}
@@ -985,15 +986,15 @@ political_comps <-  pol_naive_pe %>%
 write_rds(political_comps, "data/political_comps.rds")
 
 
-rectangle1 <- data.frame(xmin = "2015-09",
+rectangle1 <- data.frame(xmin = "2015-08",
                         xmax = "2017-09",
                         ymin = -Inf, ymax = Inf)
 
 rectangle2 <- data.frame(xmin = "2007-11",
-                        xmax = "2010-01",
+                        xmax = "2010-02",
                         ymin = -Inf, ymax = Inf)
 
-political_comps %>%
+pol_comps <- political_comps %>%
   ggplot(aes(x=year_month, y=value, group=index, color = index)) +
   geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
               fill ="#453781FF" , alpha = 0.2,inherit.aes = FALSE )+
@@ -1010,7 +1011,7 @@ political_comps %>%
     plot.title = element_text(size=14),
     axis.text.x = element_text(angle = 90)
   ) +
-  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+  scale_x_discrete(breaks = c("2007-11", "2010-02","2015-08", "2017-09"))
 
 ggsave("bin/pol_comps.jpeg")
   
@@ -1026,12 +1027,12 @@ write_rds(fiscal_comps, "data/fiscal_comps.rds")
 fiscal_comps %>%
   ggplot(aes(x=year_month, y=value, group=index, color = index)) +
   geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#6b4596ff" , alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#eb8055ff" , alpha = 0.2,inherit.aes = FALSE )+
   geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#6b4596ff" , alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#eb8055ff" , alpha = 0.2,inherit.aes = FALSE )+
   geom_line(aes(size = index))+
   scale_size_manual(values=c(0.2, 1.5)) +
-  scale_color_manual(values = c("grey","#6b4596ff"))+
+  scale_color_manual(values = c("grey","#eb8055ff"))+
   theme(legend.position="none") +
   ggtitle("Naive- and refined fiscal policy uncertainty index") +
   theme_base()+
@@ -1040,7 +1041,7 @@ fiscal_comps %>%
     plot.title = element_text(size=14),
     axis.text.x = element_text(angle = 90)
   ) +
-  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+  scale_x_discrete(breaks = c("2007-11", "2010-02","2015-08", "2017-09"))
 
 ggsave("bin/fiscal_comps.jpeg")
 
@@ -1056,12 +1057,12 @@ write_rds(monetary_comps, "data/monetary_comps.rds")
 monetary_comps %>%
   ggplot(aes(x=year_month, y=value, group=index, color = index)) +
   geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#31668dff" , alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#6dcc58ff" , alpha = 0.2,inherit.aes = FALSE )+
   geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#31668dff" , alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#6dcc58ff" , alpha = 0.2,inherit.aes = FALSE )+
   geom_line(aes(size = index))+
   scale_size_manual(values=c(0.2, 1.5)) +
-  scale_color_manual(values = c("grey","#31668dff"))+
+  scale_color_manual(values = c("grey","#6dcc58ff"))+
   theme(legend.position="none") +
   ggtitle("Naive- and refined monetary policy uncertainty index") +
   theme_base()+
@@ -1070,7 +1071,7 @@ monetary_comps %>%
     plot.title = element_text(size=14),
     axis.text.x = element_text(angle = 90)
   ) +
-  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+  scale_x_discrete(breaks = c("2007-11", "2010-02","2015-08", "2017-09"))
 
 ggsave("bin/monetary_comps.jpeg")
 
@@ -1086,12 +1087,12 @@ write_rds(financial_comps, "data/financial_comps.rds")
 financial_comps %>%
   ggplot(aes(x=year_month, y=value, group=index, color = index)) +
   geom_rect(data = rectangle1, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#6dcc58ff", alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#b0dd31ff", alpha = 0.2,inherit.aes = FALSE )+
   geom_rect(data = rectangle2, aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax), 
-              fill ="#6dcc58ff" , alpha = 0.2,inherit.aes = FALSE )+
+              fill ="#b0dd31ff" , alpha = 0.2,inherit.aes = FALSE )+
   geom_line(aes(size = index))+
   scale_size_manual(values=c(0.2, 1.5)) +
-  scale_color_manual(values = c("grey","#6dcc58ff"))+
+  scale_color_manual(values = c("grey","#b0dd31ff"))+
   theme(legend.position="none") +
   ggtitle("Naive- and refined fiancial uncertainty index") +
   theme_base()+
@@ -1100,7 +1101,7 @@ financial_comps %>%
     plot.title = element_text(size=14),
     axis.text.x = element_text(angle = 90)
   ) +
-  scale_x_discrete(breaks = c("2007-11", "2010-01","2015-09", "2017-09"))
+  scale_x_discrete(breaks = c("2007-11", "2010-02","2015-08", "2017-09"))
 
 ggsave("bin/financial_comps.jpeg")
 
@@ -1110,34 +1111,93 @@ ggsave("bin/financial_comps.jpeg")
 ```{r}
 rawdata <- refine_raw %>% 
   select(year_month, PubDate) %>% 
-  mutate(body = all_sabinet$article) %>% 
   mutate(refine = (refine_raw$uncertain)*(-1)) %>% 
-  filter(year_month>="2004-01")
+  filter(year_month>="2004-01") %>%
+  as.tibble()
 
 write_rds(rawdata, "data/postestimation.rds")
 
+
 first_cohort <- rawdata %>% 
-  filter(year_month<="2006-12" & year_month>="2004-06") %>% 
+  filter(year_month<="2010-02" & year_month>="2007-11") %>% 
   group_by(PubDate) %>%
   mutate(us = mean(refine)) %>% ungroup() 
+
 
 second_cohort <- rawdata %>% 
-  filter(year_month<="2009-12" & year_month>="2007-12") %>% 
+  filter(year_month<="2017-07" & year_month>="2015-08") %>% 
   group_by(PubDate) %>%
   mutate(us = mean(refine)) %>% ungroup() 
-
-third_cohort <- rawdata %>% 
-  filter(year_month<="2014-09" & year_month>="2013-10") %>% 
-  group_by(PubDate) %>%
-  mutate(us = mean(refine)) %>% ungroup() 
-
-fourth_cohort <- rawdata %>% 
-  filter(year_month<="2017-07" & year_month>="2015-09") %>% 
-  group_by(PubDate) %>%
-  mutate(us = mean(refine)) %>% ungroup() 
+write_rds(first_cohort, "data/first.rds")
+write_rds(second_cohort, "data/second.rds")
 
 
-temp<- fourth_cohort %>% filter(year_month=="2015-12") %>% select(year_month, PubDate, us) %>% unique() %>% arrange(us, decreasing=TRUE) %>% head(., n = 5) %>% arrange(PubDate)
+temp<- second %>% filter(year_month=="2017-03") %>% select(year_month, PubDate, us) %>% 
+  unique() %>% arrange(us, decreasing=TRUE) %>% 
+  head(., n = 5) %>% arrange(PubDate)
+```
+
+##Breakpoint analysis
+```{r}
+ts_pol <- pol_refine_pe %>% 
+  select(year_month, composite)
+ts_pol <- ts(ts_pol$composite, start=c(1900,1), end=c(2039, 1), frequency=1)
+
+bp_ts <- breakpoints(ts_pol ~ 1)
+summary(bp_ts)
+plot(bp_ts)
+plot(ts_pol)
+lines(bp_ts)
+
+breakpoint_pol <- pol_refine_pe %>% 
+  select(composite, year_month) %>% 
+  mutate(bp = seq(1900, 2038))
+
+ts_fis <- fis_refine_pe %>% 
+  select(year_month, composite)
+ts_fis <- ts(ts_fis$composite, start=c(1900,1), end=c(2056, 1), frequency=1)
+
+bp_ts <- breakpoints(ts_fis ~ 1)
+summary(bp_ts)
+plot(bp_ts)
+plot(ts_fis)
+lines(bp_ts)
+
+breakpoint_fis <- fis_refine_pe %>% 
+  select(composite, year_month) %>% 
+  mutate(bp = seq(1900, 2056))
+
+ts_mon <- mon_refine_pe %>% 
+  select(year_month, composite)
+ts_mon <- ts(ts_mon$composite, start=c(1900,1), end=c(2011, 1), frequency=1)
+
+bp_ts <- breakpoints(ts_mon ~ 1)
+summary(bp_ts)
+plot(bp_ts)
+plot(ts_mon)
+lines(bp_ts)
+
+breakpoint_mon <- mon_refine_pe %>% 
+  select(composite, year_month) %>% 
+  mutate(bp = seq(1900, 2011))
+
+
+ts_fin <- fin_refine_pe %>% 
+  select(year_month, composite)
+ts_fin <- ts(ts_fin$composite, start=c(1900,1), end=c(2045, 1), frequency=1)
+
+bp_ts <- breakpoints(ts_fin ~ 1)
+summary(bp_ts)
+plot(bp_ts)
+plot(ts_fin)
+lines(bp_ts)
+
+breakpoint_fin <- fin_refine_pe %>% 
+  select(composite, year_month) %>% 
+  mutate(bp = seq(1900, 2045))
+
+
+
 ```
 
 ```{r}

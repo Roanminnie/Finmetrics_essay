@@ -321,25 +321,28 @@ probabality of observing the type of relationships reviewed in section
 \ref{sec_litreview}.
 
 From all the potential data sources available, Sabinet meets all the
-requirements stemming from the aim of this paper. PDFs containing
-digital scans of articles in three newspapers were downloaded from the
-Sabinet online database. These files were converted to raw text format
-using \textsc{pdftools}. The final dataset comprises 178688 articles in
-three South African newspapers from January 2004 till October 2017. The
-\emph{Business Day} newspaper constitutes the largest contribution with
-117169 articles, the \emph{Sowetan} 37403 articles and the
-\emph{Financial Mail} the remaining 24116 articles.
+requirements stemming from the aim of this paper. This online database
+hosts multiple newspapers and periodicals from 1978. Three newspapers in
+particular meet the third criterium stated above. With a readership of
+approximately 500 000, the \emph{Sowetan} represent a large readership
+throughout South Africa. Second, with a readership of approximately 80
+000, the \emph{Business Day} is specifically aimed at financial matters.
+Finally, focussing on news in the financial and political space, the
+\emph{Financial Mail} has an average readership of 40 000 (Odendaal and
+Reid \protect\hyperlink{ref-Odendaal2018}{2018}). The focus of the
+\emph{Business Day} and the \emph{Financial Mail} specifically makes it
+appropriate as it meets the first criterium imposed on the data source.
 
-These newspapers represent a large readership throughout South Africa.
-The \emph{Sowetan} is by far the biggest newspaper out of the three,
-having an exclusive readership of around 500 000. The
-\emph{Business Day} can be considered the most read newspaper aimed at
-financial matters and has a readership of approximately 80 000. The
-smallest of the three, the \emph{Financial Mail}, is a very concentrated
-newspaper with a key focus in the financial, investment and political
-space. It's readership hovers around 40 000. All of these newspaper fall
-under a publishing house called the Tiso Blackstar Group which
-specialises in print and digital media products.
+The final dataset was constructed by Odendaal and Reid
+(\protect\hyperlink{ref-Odendaal2018}{2018}) who downloaded PDFs of the
+digital scans of articles in the three newspapers from the Sabinet
+online database. These files were converted to raw text format using
+\textsc{pdftools} (Ooms \protect\hyperlink{ref-Ooms2017}{2017}). The
+final dataset comprises 178688 articles in the three newspapers from
+January 2004 till October 2017. The \emph{Business Day} newspaper
+constitutes the largest contribution with 117 169 articles, the
+\emph{Sowetan} 37 403 articles and the \emph{Financial Mail} the
+remaining 24 116 articles.
 
 \subsection{\texorpdfstring{Methodology
 \label{sec_method}}{Methodology }}\label{methodology}
@@ -455,7 +458,7 @@ articles in the filtered data subset\footnote{Calculating the mean
   controls for the volume of articles varying per day.}. The daily
 uncertainty is aggregated to a monthly score by once again calculating
 the mean of the daily uncertainty scores. Finally, the monthly
-uncertainty score is scaled which provides the index.
+uncertainty score is scaled which provides the index for every keyword.
 
 The above explanation can be framed mathematically as follows: Denote an
 article as \(a_{jit}\) and define its uncertainty score as \(us_{jit}\)
@@ -464,7 +467,22 @@ mean uncertainty score per article constitutes the daily uncertainty
 score, \(\frac{\sum_{j=1}^Jus_{jit}}{J}= US_{it}\). The monthly score is
 calculated as the mean of the daily uncertainty scores per month,
 \(\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}\). The scaled version of this
-makes out the final index.
+makes out the final indices.
+
+Recall that there are still a number of indices for every topic (i.e.~17
+indices relating to monetary policy, 19 to fiscal policy, 18 to
+financial markets and 18 for political uncertainty). Looking at 17
+different indices to guage monetary policy uncertainty is impossible.
+Therefore, a composite index from all of the keywords are built
+employing principal component analysis. The first component uncovered,
+is equal to the composite monetary policy uncertainty index.
+
+At this point in time, it is necessary to review how the results will
+look like. Recall that every index is calucalted in two ways: the naive
+and refined manner. As such, there are two sets of indices for every
+topic in table \ref{tbl_keywords}. Each set consists of a subindex for
+every keyword relating to every topic and from these subindices one
+composite index is calculated.
 
 \subsection{\texorpdfstring{Results
 \label{sec_results}}{Results }}\label{results}
@@ -473,41 +491,54 @@ makes out the final index.
 South Africa
 \label{sec_discuss}}{The evolution of Economic Policy Uncertainty in South Africa }}\label{the-evolution-of-economic-policy-uncertainty-in-south-africa}
 
-The four composite indices in section \ref{sec_results} provide a unique
-way to represent the evolution of policy uncertainty in South Africa.
-For several periods, one can observe similar spikes in uncertainty in
-each of the four topics. As such, uncertainty is described along the
-lines of events clustered by periods across topics.
+Observing figures \ref{mon_comp_final} to \ref{pol_comp_final} showing
+the composite naive index in grey and the refined index in colour,
+highlights the similarities in the results. The main difference between
+the indices is that the refined index is, as the name suggests, more
+refined. In all cases, the refined index is less volatile than its naive
+counterpart and shocks are less persistent. For this reason, the
+remaineder of this paper works solely with the refined composite index.
 
-\subsection{June 2004 to December
-2006}\label{june-2004-to-december-2006}
+Figures \ref{mon_comp_final} to \ref{pol_comp_final} also show the
+similarity in peak periods across the four topics. To test this
+formally, a structural break test was performed on each composite index
+to identify whether significant shifts in uncertainty is common across
+topics\footnote{The calculations show breakpoints for the political
+  uncertainty index at November 2007, February 2010 and August 2015. For
+  the fiscal policy uncertainty index at December 2007, January 2012 and
+  August 2015. For the monetary policy uncertainty index at November
+  2007 and April 2014. For the financial uncertainty index at December
+  2007 and July 2014.}. From these results, two distinct periods are
+identified (highlighted panels in figures \ref{mon_comp_final} to
+\ref{pol_comp_final}), respectively discussed below\footnote{For the
+  subsequent sections, numerous newspaper articles in the constructed
+  dataset was consulted to build a chronological narrative of economic
+  policy uncertainty in South Africa. Along with this, various internet
+  sources was consulted to identify the largest news stories, including:
+  South African History Online (``2016 in Review''
+  \protect\hyperlink{ref-2016}{2016}), BBC News (``South Africa Profile
+  - Timeline'' \protect\hyperlink{ref-2018}{2018}), Mekuto
+  (\protect\hyperlink{ref-Mekuto2017}{2017}), .}
 
-\subsection{December 2007 to December
-2009}\label{december-2007-to-december-2009}
+\subsection{November 2007 to February
+2010}\label{november-2007-to-february-2010}
 
-\subsection{October 2013 to September
-2014}\label{october-2013-to-september-2014}
+\subsection{August 2015 to July 2017}\label{august-2015-to-july-2017}
 
-\subsection{September 2015 to July
-2017}\label{september-2015-to-july-2017}
-
-According to all four indices, uncertainty in South Africa peaked from
-the end of the third quarter of 2015 to the second quarter of 2017.
-
-The last four months of 2015 was characterised by extreme political
+The last five months of 2015 was characterised by extreme political
 volatility in South Africa. The period started out with uncertainty
-about the Monetary Policy Committee's decision regarding the instrument
-rate. Amid unfavourable economic conditions such as high unemployment,
-\emph{Fees must Fall} and wage inequality strikes and concerns about
-rising debt levels, it was not sure whether the MPC will increase the
-repo rate or leave it unchanged. These conditions were also a source of
-uncertainty as newspapers speculated about the impact of the economic
-downturn. In this period, the news was also dominated by uncertainty
-regarding the future of electricity supply in South Africa. In
-particular, the discussions in parliament regarding the proposed nuclear
-programme enjoyed extensive coverage in the news.
+about the Monetary Policy Committee's (MPC) decision regarding the
+instrument rate. Amid unfavourable economic conditions such as high
+unemployment, \emph{Fees must Fall}- and wage inequality strikes and
+concerns about rising debt levels, it was not sure whether the MPC will
+increase the repo rate or leave it unchanged. These conditions on their
+own were also a source of uncertainty as newspapers speculated about the
+impact of the economic downturn. In this period, the news was also
+dominated by uncertainty regarding the future of electricity supply in
+South Africa. In particular, the discussions in parliament regarding the
+proposed nuclear programme enjoyed extensive coverage in the news.
 
-One big event causes all four indices to show the biggest spike in
+One big event caused all four indices to show the biggest spike in
 uncertainty at the end of 2015: the replacement of Minister of Finance
 Nhlanhla Nene, with a relatively unknown figure, David van Rooyen. This
 shock came amid already rising concerns for a credit ratings downgrade.
@@ -516,8 +547,62 @@ the replacement of Nene as minister. Giving in to mounting pressure from
 various agents, President Jacob Zuma replaced David van Rooyen with
 Pravin Gordhan after only four days as finance minister. This went a
 long way in lowering uncertainty in the subsequent month, but the level
-of uncertainty remained higher for 2016 and 2017 compared to before
+of uncertainty remained high for 2016 and 2017 compared to before
 September 2015.
+
+In 2016, \emph{Fees must Fall} protests continue with the start of the
+academic year with increased pressure on government to intervene.
+Regardless, President Zuma's state of the nation address in February
+2016 failed to provide certainty about the ruling party's proposed plans
+to address the dire state of the economy and ongoing protests. Moreover,
+during the first two months of 2016, there was considerable uncertainty
+about the future of South Africa's sovereign credit rating as rating
+agencies kept a close eye on minister Pravin Gordhan delivering the
+budget speech at the end of February. The finance minister remained in
+the news the following month with rumours of his arrest resulting from
+an investigation by the Hawks into a ``rogue unit'' when he was
+commissioner at the South African Revenue Services.
+
+The second quarter of 2016 saw the Constitutional Court condemn
+President Zuma's handling of the Public Protector Thuli Madonsela's
+report on improvements to the president's private property, Nkandla. The
+court's finding increased calls for Zuma's resignation. The news
+referred to this time as a \emph{deep political crisis} for the ruling
+party. Uncertainty ruled about the voting process in a motion of no
+confidence against the president after the party decided to support Zuma
+in a meeting of the party's top six officials. These events had a
+significant impact on the financial markets with the Rand losing ground
+against the Dollar and fear of a credit rating downgrade increasing. By
+the end of the quarter uncertainty decreased (also seen in figures
+\ref{mon_comp_final} to \ref{pol_comp_final}) with reports about the
+possibility of a downgrade being less frequent.
+
+In the third quarter of 2016 the political landscape in South Africa
+seems to calm down. This notwithstanding the municipal elections in
+August which does not show an increase in the indices to the extent that
+is seen in the previous quarter. This is likely due to the extensive
+coverage of the results of the Brexit referendum in the news. In
+September, President Zuma pays back the money owed according to the
+Public Protector's report for the upgrades to Nkandla. Apart from the
+normal coverage of the MPC's decision regarding the repo rate, this
+quarter ends on a considerably less uncertain note.
+
+The end of 2016 was characterised by renewed uncertainty about a looming
+credit rating downgrade. Early in the final quarter of 2016 multiple
+reports issued by among other, previous Minister of Finance Trevor
+Manuel as well as Pravin Gordhan warned against deviating from the
+fiscal targets set in the February budget. This was amid ongoing
+investigations into minister Gordhan who was preparing the medium-term
+budget speech that was sure to play a key part in the ratings agencies'
+decision. Despite markets expecting a one notch downgrade, all three
+rating agencies placed South Africa on a negative outlook for one year.
+Charges against minister Gordhan were dropped at the end of October.
+
+A second report released by Public Protector Thuli Madonsela at the end
+of 2016 proved to set the stage for a number of events in 2017. The
+report concerned President Zuma's involvement in and the extent of state
+capture in South Africa. However, the ANC again stood by Zuma calling
+the report inconclusive.
 
 \section{\texorpdfstring{Conclusion
 \label{sec_conclude}}{Conclusion }}\label{conclusion}
@@ -528,6 +613,10 @@ September 2015.
 \addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
+\hypertarget{ref-2016}{}
+``2016 in Review.'' 2016. \emph{South African History Online}.
+\url{https://www.sahistory.org.za/article/2016-review}.
+
 \hypertarget{ref-Azqueta-Gavaldon2017}{}
 Azqueta-Gavaldón, Andrés. 2017. ``Developing News-Based Economic Policy
 Uncertainty Index with Unsupervised Machine Learning.'' \emph{Economics
@@ -588,6 +677,20 @@ and Finance: A Survey: TEXTUAL ANALYSIS IN ACCOUNTING AND FINANCE.''
 \emph{Journal of Accounting Research} 54 (4): 1187--1230.
 doi:\href{https://doi.org/10.1111/1475-679X.12123}{10.1111/1475-679X.12123}.
 
+\hypertarget{ref-Mekuto2017}{}
+Mekuto, Dinilohlanga. 2017. ``Highlights of Stories in 2017.''
+\url{http://www.sabcnews.com/sabcnews/2017s-biggest-stories/}.
+
+\hypertarget{ref-Odendaal2018}{}
+Odendaal, Nicolaas Johannes, and Monique Reid. 2018. ``Media Based
+Sentiment Indices as an Alternative Measure of Consumer Confidence.''
+\emph{Stellenbosch Economic Working Papers} WP17/2018.
+
+\hypertarget{ref-Ooms2017}{}
+Ooms, Jeroen. 2017. ``Pdftools: Text Extraction, Rendering and
+Converting of Pdf Documents.'' \emph{Computer Software Manual{]}.
+Retrieved from Https://CRAN. R-Project. Org/Package= Pdftools}.
+
 \hypertarget{ref-Pastor2013}{}
 Pástor, Ľuboš, and Pietro Veronesi. 2013. ``Political Uncertainty and
 Risk Premia.'' \emph{Journal of Financial Economics} 110 (3): 520--45.
@@ -595,6 +698,10 @@ doi:\href{https://doi.org/10.1016/j.jfineco.2013.08.007}{10.1016/j.jfineco.2013.
 
 \hypertarget{ref-Redl2015}{}
 Redl, Chris. 2015. ``Macroeconomic Uncertainty in South Africa,'' 34.
+
+\hypertarget{ref-2018}{}
+``South Africa Profile - Timeline.'' 2018. \emph{BBC News}.
+\url{https://www.bbc.com/news/world-africa-14094918}.
 
 \hypertarget{ref-Tobback2018}{}
 Tobback, Ellen, Hans Naudts, Walter Daelemans, Enric Junqué de Fortuny,
