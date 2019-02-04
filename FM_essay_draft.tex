@@ -149,20 +149,19 @@
 % Set to FALSE if wanting to remove title (for submission)
 
 
-
-
-\author[Add1]{Roan Minnie}
-\ead{roanminnie@gmail.com}
-
-\author[Add2]{Nicolaas Johannes Odendaal}
+\author[Add1]{Nico Katzke}
 \ead{hanjo.oden@gmail.com}
 
+\author[Add2]{Hanjo Odendaal}
+\ead{hanjo.oden@gmail.com}
 
+\author[Add3]{Roan Minnie}
+\ead{roanminnie@gmail.com}
 
-
-\address[Add1]{Stellenbosch University, Stellenbosch, South Africa}
+\address[Add1]{Stellenbosch University, Stellenbosch, South Africa; Prescient Securities, Cape Town, South Africa}
 \address[Add2]{Stellenbosch University, Stellenbosch, South Africa; Bureau of Economic
 Research, South Africa}
+\address[Add3]{Stellenbosch University, Stellenbosch, South Africa}
 
 \cortext[cor]{Corresponding author: Roan Minnie}
 
@@ -210,12 +209,12 @@ day-to-day economy can be detrimental. Reviewing existing literature
 illustrates that uncertainty regarding policies has both a micro- and
 macroeconomic impact. Before such an impact can be established, a measure of uncertainty - a concept inherently difficult to quantify - is necessary. 
 
-The aim of this paper is twofold. First, it contributes to existing literature by constructing four uncertainty indices: a monetary policy-, fiscal policy-, financial market- and political uncertainty index. Second, these indices are used to provide a descriptive narrative of the evolution of economic policy uncertainty in South Africa. This narrative is developed along the hand of changes in the indices, describing the events that caused the indices to increase. 
+The aim of this paper is twofold. First, it contributes to existing literature by constructing four uncertainty indices: a monetary policy-, fiscal policy-, financial market- and political uncertainty index. Second, the indices are used to provide a descriptive narrative of the evolution of economic policy and political uncertainty in South Africa. This narrative is developed by investigating the events that was likely to cause fundamental shifts in the indices, leading to periods of heightened uncertainty.
 
 The indices are constructed employing sentiment analysis on a dataset
-containing 178 688 articles from three South African newspapers from January 2004 till July 2017. For
-robustness, the indices are constructed using a naive and refined method. Two distinct periods where uncertainty changed fundamentally is uncovered by a structural break analysis. The periods from November 2007 to February
-2010 and August 2015 to July 2017 is discussed in great detail. 
+containing 178 688 articles from three South African newspapers from January 2004 till July 2017. The analysis entails evaluating all articles published on a specific day that pertain to a topic and assigning an uncertainty score to each article. For robustness, the indices are constructed using a naive and refined method.
+
+The remainder of this paper is structured as follows: section \ref{sec_litreview} gives a broad overview of extant literature pertaining to economic policy and political uncertainty. Section \ref{sec_EPU} discusses the selection of the appropriate data source, the methodology of constructing the indices and provides a graphical presentation of the results. Section \ref{sec_discuss} identifies two distinct periods where uncertainty changed fundamentally as uncovered by a structural break analysis. The periods from November 2007 to February 2010 and August 2015 to July 2017 is discussed in greater detail. 
 
 \section{\texorpdfstring{Economic policy uncertainty in existing
 literature
@@ -225,44 +224,26 @@ Existing literature provide several definitions of uncertainty. In
 general terms, Jurado, Ludvigson, and Ng
 (\protect\hyperlink{ref-Jurado2015}{2015}) define uncertainty as
 volatility in shocks that cannot be forecasted by economic agents. Bloom
-(\protect\hyperlink{ref-Bloom2014}{2014}) echoes this by describing
-uncertainty as a concept that occupies the minds of agents in relation
-to possible future events. More specifically, Baker, Bloom, and Davis
+(\protect\hyperlink{ref-Bloom2014}{2014}) also describes it in terms of a forward-looking agent being uncertain in relation to possible future events. More specifically, Baker, Bloom, and Davis
 (\protect\hyperlink{ref-Baker2016}{2016}) define economic policy
-uncertainty not only as uncertainty about policies as such, but also
-about who is making policy decisions and the effects thereof. It is
+uncertainty not only as uncertainty about policies, but also encompasses the decision maker and the effects thereof. It is
 important to note that uncertainty is defined in terms of all agents in
-the economy - as stated by Bloom
-(\protect\hyperlink{ref-Bloom2014}{2014}) - consumers, managers and
-policymakers. The remainder of this paper will thus refer to EPU at this
-aggregated level.
+the economy - consumers, managers and policymakers (Baker, Bloom, and Davis
+\protect\hyperlink{ref-Baker2016}{2016}). The remainder of this paper will thus refer to economic policy and political uncertainty (EPU)\footnote{For the remainder of this paper, economic policy uncertainty also takes into account political uncertainty due to the entanglement of the two concepts in South Africa.} at this aggregated level.
 
-The sole purpose of this paper is to provide a narrative of the
-evolution of economic policy uncertainty in South Africa that is heavily
-supported by descriptive analysis. An obvious extension to this research
+The purpose of this paper is to provide a narrative of the
+evolution of EPU in South Africa that is supported by descriptive analysis. An extension to this research
 is to investigate the impact of uncertainty on key variables of
 interest. Albeit not within the scope of this paper, it is still
 pertinent to motivate the rationale for constructing a measure of EPU by
 looking at the relationships existing literature have uncovered. A
 delineation between a macro- and microeconomic focus is immediate in
-this literature. This paper will suffice with motivating the usefulness
+the literature. This paper will suffice with motivating the usefulness
 of a measure for EPU by referring to this literature below.
 
 In terms of the microeconomy, Bachmann, Elstner, and Sims
 (\protect\hyperlink{ref-Bachmann2013}{2013}) find that there is a
-decline in production and employment in response to a shock in EPU.
-Bloom (\protect\hyperlink{ref-Bloom2014}{2014}) echoes that the level of
-uncertainty at a microeconomic level (i.e.~individual industries, firms
-and plants) is usually higher during times of economic recessions.
-However, not sufficiently controlling for the economic conditions that
-can also influence production and employment can confound the estimate
-of the impact of EPU on these variables. To this end, Caggiano,
-Castelnuovo, and Groshenny (\protect\hyperlink{ref-Caggiano2014}{2014})
-show that not taking into account that uncertainty shocks occur mostly
-in economic recessions, leads to an underestimation of the negative
-relationship between uncertainty and unemployment. It is immediate that
-aggregating the industry/firm level effects will feed into the
-macroeconomy.
+decline in production and employment in response to a shock in EPU. The authors construct an uncertainty index at a business level by comparing ex ante disagreements and ex post forecast errors for both the German Business Climate Survey and US Business Outlook Survey from 1980 to 2010. Bloom (\protect\hyperlink{ref-Bloom2014}{2014}) evaluates uncertainty on a microeconomic level (i.e.~individual industries, firms and plants) by looking at the dispersion of productivity shocks to firms, newspaper coverage of uncertainty as well as forecaster disagreement. The author finds that the level of uncertainty is usually higher during times of economic recessions. However, not sufficiently controlling for the recessionary conditions that also influence production and employment, can confound the estimate of the impact of uncertainty on these variables. To this end, Caggiano, Castelnuovo, and Groshenny (\protect\hyperlink{ref-Caggiano2014}{2014}) show that not taking into account that uncertainty shocks occur mostly in economic recessions, leads to an underestimation of the negative relationship between uncertainty and unemployment. It is immediate that aggregating the industry/firm level effects will feed into the macroeconomy.
 
 At the macroeconomic level, Baker, Bloom, and Davis
 (\protect\hyperlink{ref-Baker2016}{2016}) find that rising uncertainty
@@ -289,7 +270,7 @@ respondents' answers to forward-looking questions. Redl
 (\protect\hyperlink{ref-Redl2015}{2015}) takes an alternative approach,
 employing inter alia data from professional forecasting competitions and
 scrutinising official economic reviews released by the South African
-Reserve Bank to construct an EPU index.
+Reserve Bank to construct an EPU index. %add discussion on method and findings
 
 More recently, a novel approach by Baker, Bloom, and Davis
 (\protect\hyperlink{ref-Baker2016}{2016}) garnered academic praise and
@@ -315,17 +296,13 @@ South Africa
 \subsection{\texorpdfstring{Data \label{sec_data}}{Data }}\label{data}
 
 The aim of this paper is to capture uncertainty in the South African
-economy as reported by newspaper articles. The aim is to provide a set
-of indices describing the evolution of uncertainty which can be used to
-uncover relationships such as those reviewed in section
-\ref{sec_litreview}. This requires that any potential data sources meets
+economy as reported by newspaper articles. This requires that any potential data sources meets
 a set of criteria. First, the sources have to be South African and cover
 predominantly South African events. Second, the sources have to be
 available for a significant period so as to be able to extract the
 evolution of uncertainty over time. Finally and most importantly, the
 articles forming part of any potential data source have to reach a large
-proportion of the economic decisionmakers. This criterium improves the
-probability of observing the type of relationships reviewed in section
+proportion of the economic decisionmakers. This criterium improves the usefulness of these indices and increases the probability of observing the type of relationships reviewed in section
 \ref{sec_litreview}.
 
 From all the potential data sources available, Sabinet meets all the
@@ -355,12 +332,8 @@ remaining 24 116 articles.
 \subsection{\texorpdfstring{Methodology
 \label{sec_method}}{Methodology }}\label{methodology}
 
-In order to build an uncertainty index, the newspaper articles discussed
-in section \ref{sec_data} is scrutinised. This paper presents two sets
-of indices - the naive and the refined - both following the same
-methodology. The delineating factor is the way in which the uncertainty
-score for each article is calculated. As such, this calculation for the
-respective uncertainty scores is discussed before explaining the general
+This paper presents two sets
+of indices - the naive and the refined. The methodologies are equivalent barring the way in which the uncertainty score for each article is calculated. As such, the calculation for the respective uncertainty scores is discussed before explaining the general
 methodology of constructing the indices.
 
 \subsubsection{\texorpdfstring{Calculating uncertainty scores
@@ -375,8 +348,44 @@ state that every article matching the aforementioned criteria forms part
 of the naive index, regardless of the entity that the uncertainty is
 related to. To control for this, the naive index is calculated for
 uncertainty pertaining to specific topics. This is achieved by
-identifying a subset of the articles pertaining to specific topics. This
-is discussed in further detail in section \ref{ss_topics}.
+identifying a subset of the articles pertaining to specific topics. %This is discussed in further detail in section \ref{ss_topics}.
+
+To identify each of the topics, the articles are searched for a set of keywords
+pertaining to each topic. The keywords, displayed in table
+\ref{tbl_keywords}, are based on a combination of extant
+literature (inter alia Hardouvelis et al.
+(\protect\hyperlink{ref-Hardouvelis2018}{2018}) and Redl
+(\protect\hyperlink{ref-Redl2015}{2015})) and the author's own initiative. Only
+articles that contain at least one of the keywords are included in the
+subset for the calculation of a specific index.
+
+\begin{table}[H]\footnotesize
+	\caption{Keywords per Index category \label{tbl_keywords}} 
+	\centering
+	\begin{tabular}{rlrrr}
+		\cmidrule{2-5}          & \textbf{Fiscal Policy } & \multicolumn{1}{l}{\textbf{Financial markets }} & \multicolumn{1}{l}{\textbf{Political}} & \multicolumn{1}{l}{\textbf{Monetary Policy }} \\
+		\cmidrule{2-5}    1     & econom & \multicolumn{1}{l}{econom} & \multicolumn{1}{l}{econom} & \multicolumn{1}{l}{econom} \\
+		2     & policy & \multicolumn{1}{l}{policy} & \multicolumn{1}{l}{policy} & \multicolumn{1}{l}{policy} \\
+		3     & fiscal & \multicolumn{1}{l}{debt} & \multicolumn{1}{l}{ANC} & \multicolumn{1}{l}{price} \\
+		4     & parliament & \multicolumn{1}{l}{financ} & \multicolumn{1}{l}{party} & \multicolumn{1}{l}{inflation} \\
+		5     & legislation & \multicolumn{1}{l}{stock} & \multicolumn{1}{l}{political} & \multicolumn{1}{l}{monetary} \\
+		6     & minister & \multicolumn{1}{l}{JSE} & \multicolumn{1}{l}{president} & \multicolumn{1}{l}{committee} \\
+		7     & budget & \multicolumn{1}{l}{market} & \multicolumn{1}{l}{election} & \multicolumn{1}{l}{oil} \\
+		8     & financ & \multicolumn{1}{l}{exchange} & \multicolumn{1}{l}{vote} & \multicolumn{1}{l}{shock} \\
+		9     & speech & \multicolumn{1}{l}{rand} & \multicolumn{1}{l}{government } & \multicolumn{1}{l}{SARB} \\
+		10    & government & \multicolumn{1}{l}{interest} & \multicolumn{1}{l}{parliament} & \multicolumn{1}{l}{interest} \\
+		11    & bill  & \multicolumn{1}{l}{bank } & \multicolumn{1}{l}{shuffle} & \multicolumn{1}{l}{rate} \\
+		12    & tax   & \multicolumn{1}{l}{bond} & \multicolumn{1}{l}{cabinet} & \multicolumn{1}{l}{repo} \\
+		13    & VAT   & \multicolumn{1}{l}{invest} & \multicolumn{1}{l}{poll} & \multicolumn{1}{l}{review} \\
+		14    & downgrade & \multicolumn{1}{l}{rate} & \multicolumn{1}{l}{downgrade} & \multicolumn{1}{l}{hike} \\
+		15    & debt  & \multicolumn{1}{l}{FDI} & \multicolumn{1}{l}{junk} & \multicolumn{1}{l}{increase} \\
+		16    & rating & \multicolumn{1}{l}{sovereign} & \multicolumn{1}{l}{legislation} & \multicolumn{1}{l}{decrease} \\
+		17    & credit & \multicolumn{1}{l}{rating} & \multicolumn{1}{l}{rating} & \multicolumn{1}{l}{lower} \\
+		18    & expenditure & \multicolumn{1}{l}{credit} & \multicolumn{1}{l}{credit} &  \\
+		19    & spending &       &       &  \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 A further shortcoming of the naive index is that articles are weighted
 equally, i.e.~all articles containing the word ``uncertain'' contribute
@@ -386,87 +395,35 @@ of uncertainty. Therefore, the refined uncertainty index evaluates the
 raw text data for words contained in the Loughran and Mcdonald
 (\protect\hyperlink{ref-Loughran2016}{2016}) uncertainty dictionary.
 This dictionary consists of 297 words relating to uncertainty and thus
-provides a more comparative measure of sentiment (Loughran and Mcdonald
+provides a more extensive list of terms beyond a single word (Loughran and Mcdonald
 \protect\hyperlink{ref-Loughran2016}{2016}). Measuring the score in this
 manner yields a continuous variable with each article's contribution to
 the monthly uncertainty score equivalent to this score.
 
-\subsubsection{\texorpdfstring{Identifying topic specific uncertainty
-\label{ss_topics}}{Identifying topic specific uncertainty }}\label{identifying-topic-specific-uncertainty}
-
-This paper presents four sets of uncertainty indices - monetary policy,
-fiscal policy, financial markets and political uncertainty. To identify
-each of these topics, the articles are searched for a set of keywords
-pertaining to each topic. These keywords, displayed in table
-\ref{tbl_keywords}, were decided based on a combination of existing
-literature (inter alia Hardouvelis et al.
-(\protect\hyperlink{ref-Hardouvelis2018}{2018}) and Redl
-(\protect\hyperlink{ref-Redl2015}{2015})) and own initiatives. Only
-articles that contain at least one of the keywords are included in the
-subset for the calculation of a specific index.
-
-\begin{table}[H]\footnotesize
-\caption{Keywords per Index category \label{tbl_keywords}} 
-\centering
-\begin{tabular}{rllll}
-  \hline
- & Monetary Policy & Fiscal Policy & Financial markets & Political \\ 
-  \hline
-1 & Econom & Econom & Econom & Econom \\ 
-  2 & policy & policy & policy & policy \\ 
-  3 & price & fiscal & debt & ANC \\ 
-  4 & inflation & parliament & financ & party \\ 
-  5 & monetary & legislation & stock & political \\ 
-  6 & committee & minister & JSE & president \\ 
-  7 & oil & budget & market & election \\ 
-  8 & shock & financ & exchange & vote \\ 
-  9 & SARB & speech & rand & government \\ 
-  10 & interest & government & interest & parliament \\ 
-  11 & rate & bill & bank & shuffle \\ 
-  12 & repo & tax & bond & cabinet \\ 
-  13 & review & VAT & invest & poll \\ 
-  14 & hike & downgrade & rate & downgrade \\ 
-  15 & increase & debt & FDI & junk \\ 
-  16 & decrease & rating & sovereign & legislation \\ 
-  17 & lower & credit & rating & rating \\ 
-  18 &  & expenditure & credit & credit \\ 
-  19 &  & spending &  &  \\ 
-   \hline
-\end{tabular}
-\end{table}
 
 \subsubsection{\texorpdfstring{Constructing the indices
 \label{ss_indices}}{Constructing the indices }}\label{constructing-the-indices}
 
 Having demonstrated the different ways in which the naive- and refined
 approach measure the uncertainty score and how topic specific data
-subsets are identified, it is now shown how these scores are translated
-into an index. As mentioned, the methodology to calculate the naive- and
-refined index are exactly the same. The only difference between the two
-types of indices, is the way in which the uncertainty score is measured
-as illustrated in section \ref{ss_uncertaintyscore}. As such the general
-methodology as developed by Baker, Bloom, and Davis
-(\protect\hyperlink{ref-Baker2016}{2016}) is explained.
+subsets are identified, we know illustrate how these scores are translated
+into an index. The methodology to calculate the naive- and
+refined index are exactly the same and is explained as developed by Baker, Bloom, and Davis
+(\protect\hyperlink{ref-Baker2016}{2016}).
 
 To ease the discussion, the explanation will focus on the monetary
 policy uncertainty index\footnote{This is of course arbitrary and all
   four indices are constructed in the same manner.}. As alluded to
-earlier, the monetary policy data subset is defined so as to contain
-only articles with at least one of the keywords of the monetary policy
+earlier, the monetary policy data subset is defined as to only contain articles with at least one of the keywords of the monetary policy
 category, i.e.~one of the 17 keywords in table \ref{tbl_keywords}. From
-this data subset, 17 individual subindices are constructed - a subindex
-for every keyword. This is achieved by applying an additional filter on
-the data subset: working sequentially, the data subset is filtered to
-articles containing one keyword at a time. This step thus provides 17
-filtered data subsets that relate to each of the 17 keywords in the
-monetary policy uncertainty category.
+this data subset, 17 individual subindices are constructed from the keywords. %This is achieved by applying an additional filter on the data subset: working sequentially, the data subset is filtered to articles containing one keyword at a time. This step thus provides 17 filtered data subsets that relate to each of the 17 keywords in the monetary policy uncertainty category.
 
 A daily uncertainty score is calculated as the mean score of the
 articles in the filtered data subset\footnote{Calculating the mean
   controls for the volume of articles varying per day.}. The daily
 uncertainty is aggregated to a monthly score by once again calculating
 the mean of the daily uncertainty scores. Finally, the monthly
-uncertainty score is scaled which provides the index for every keyword.
+uncertainty score is scaled\footnote{First, the data is centred by subtracting the mean and then it is standardised by dividing by the standard deviation.} which provides the index for every keyword.
 
 The above explanation can be framed mathematically as follows: Denote an
 article as \(a_{jit}\) and define its uncertainty score as \(us_{jit}\)
@@ -474,14 +431,13 @@ where \(j\) denotes the article, \(i\) the day and \(t\) the month. The
 mean uncertainty score per article constitutes the daily uncertainty
 score, \(\frac{\sum_{j=1}^Jus_{jit}}{J}= US_{it}\). The monthly score is
 calculated as the mean of the daily uncertainty scores per month,
-\(\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}\). The scaled version of this
-makes out the final indices.
+\(\frac{\sum_{j=1}^JUS_{it}}{I}= US_{t}\). The scaled version of monthly score makes out the final indices.
 
 Recall that there are still a number of indices for every topic (i.e.~17
 indices relating to monetary policy, 19 to fiscal policy, 18 to
 financial markets and 18 for political uncertainty). Looking at 17
-different indices to guage monetary policy uncertainty is impossible.
-Therefore, a composite index from all of the keywords are built
+different indices to gauge monetary policy uncertainty is cumbersome.
+Therefore, a composite index from all of the keywords is constructed
 employing principal component analysis. The first component uncovered,
 is equal to the composite monetary policy uncertainty index.
 
@@ -634,10 +590,10 @@ quarter of 2017. Along with this, there was uncertainty on the fiscal
 front as the auditor-general's office expressed concerns that the
 funding model will result in unsustainable deficits.
 
-At the start of the second quarter of 2008, South Africa faces two
+At the start of the second quarter of 2008, South Africa faced two
 crises. In what is described as a global food price crisis, cost of
-living in South Africa reaches record levels hurting the poor. Coupled
-with this, South Africa experiences a power crisis with Eskom asking the
+living in South Africa reached record levels hurting the poor. Coupled
+with this, South Africa experienced a power crisis with Eskom asking the
 energy regulator, NERSA, to allow the electricity price to double over
 the following two years. Media reports that these crises threaten the
 Reserve Bank's policies as they argue that domestic monetary policy is
@@ -650,7 +606,7 @@ The second quarter of 2008 also saw increased criticism of President
 Mbeki as many became frustrated with his inaction regarding key issues
 in the country. These issues include the crises discussed above, but
 refers more specifically to the crisis in Zimbabwe and the future of the
-Scorpions in South Africa. Mbeki infamously commented that ``there is no
+Scorpions\footnote{The Scorpions were an independent multidisciplinary agency that investigated and prosecuted organised crime and corruption.} in South Africa. Mbeki infamously commented that ``there is no
 crisis'' while referring to election crisis in Zimbabwe. His
 relationship with Robert Mugabe also came into question during this
 time. Moreover, critics of Mbeki condemned his handling of a report
@@ -909,13 +865,14 @@ as the candidates.
 
 \section{\texorpdfstring{Conclusion
 \label{sec_conclude}}{Conclusion }}\label{conclusion}
-This paper presented four topic-specific measures of uncertainty - a concept that can be difficult to quantify. The methodology followed relies on data that is easily accessible so that extending these indices on a monthly basis, is easy to do. Employing a naive and refined method, strengthens the robustness of the results. 
+This paper presented four topic-specific measures of uncertainty - a concept that can be difficult to quantify. The methodology followed relies on data that is accessible, cost effective and that can be automated so that extending these indices on a monthly basis, is easy to do. Employing a naive and refined method, strengthens the robustness of the results. 
 
-A structural break analysis identified two periods in the dataset where uncertainty fundamentally changed. Reviewing the period of November 2007 till February 2010 shows the great uncertainty that came with the division of the ANC into a pro-Mbeki and pro-Zuma camp. This division later became so large that the party eventually split. This period was also characterised by a struggling global economy following the financial crisis. South Africa faced a recession as unemployment and prices kept rising. 
+A structural break analysis identified two periods in the dataset where uncertainty fundamentally changed. Significant increases in the indices within these periods were discussed in greater detail. Reviewing the period of November 2007 till February 2010 shows the great uncertainty that came with the division of the ANC into a pro-Mbeki and pro-Zuma camp. This division later became so large that the party eventually split. This period was also characterised by a struggling global economy following the financial crisis. South Africa faced a recession as unemployment and prices kept rising. 
 
 In August 2015 till July 2017, South Africa once again faced a volatile political landscape. President Zuma made several big changes to his cabinet, each having a large impact on uncertainty about future policies. During this time, continued reports on South Africa's sovereign credit rating caused a lot of uncertainty. By the end of the period, two rating agencies downgrade South Africa's credit to junk status. The period ends with uncertainty about the future of the leadership of the ANC as the dataset ends just before the elective conference. 
 
-The contribution of this paper is twofold. First, it summarises two very uncertain periods in South Africa's history which also serves as a robustness check of the accuracy of the indices. Second, it presents topic-specific uncertainty indices that can be employed for future research.
+The contribution of this paper is threefold. First, it analysed a large corpus of data spanning three different publications. Second, it shows that by employing only text analysis, using a naive and refined approach, key periods of uncertainty can be identified. To this end, it summarises two very uncertain periods in South Africa's history which also serves as a robustness check for the accuracy of the indices. Third, it illustrates that a big advantage of using text data is that the uncertainty can be disaggregated in whatever way the author wishes. This allows for the construction of topic-specific uncertainty indices that could potentially measure uncertainty in consumption/manufacturing and other key parts of the economy
+
 
 \newpage
 

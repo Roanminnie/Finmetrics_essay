@@ -489,6 +489,17 @@ write_rds(x = financial_refine, "data/financial_refine.rds")
 
 
 #Composite indices
+
+```{r}
+year.range.major <- function(political_naive, column = "year_month", n = 4){
+  range <- diff(range(political_naive[,column]))
+  range.num <- as.numeric(range)
+  major = max(pretty((range.num/12)/n))
+
+  return(paste(major,"years"))
+}
+```
+
 ##Political
 ```{r}
 political_naive <- readRDS("data/political_naive.rds") 
@@ -537,6 +548,7 @@ political_naive %>%
     geom_line() +
     scale_color_manual(values = c("#69b3a2", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+    scale_x_discrete(breaks = c("2004-01", "2004-04","2004-07","2004-12","2005-03","2005-06","2005-09","2005-12", "2006-04","2006-07","2006-11","2007-02","2007-05","2007-08","2007-11","2008-03","2008-07","2008-10","2009-03", "2009-06","2009-10" ,"2010-01","2010-04","2010-07" , "2010-10" ,"2011-01", "2011-04","2011-07", "2011-10", "2012-02" , "2012-05", "2012-08" ,"2012-11" ,"2013-04", "2013-08","2013-12", "2014-04" , "2014-08", "2015-07" , "2015-11" ,"2016-02" , "2016-05" ,"2016-09" , "2016-12", "2017-03" ,"2017-06" , "2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Political uncertainty in South Africa - naive index") +
     theme_base()+
@@ -595,6 +607,7 @@ political_refine %>%
     geom_line() +
     scale_color_manual(values = c("#453781FF", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+    scale_x_discrete(breaks = c("2004-01", "2004-04","2004-07","2004-12","2005-03","2005-06","2005-09","2005-12", "2006-04","2006-07","2006-11","2007-02","2007-05","2007-08","2007-11","2008-03","2008-07","2008-10","2009-03", "2009-06","2009-10" ,"2010-01","2010-04","2010-07" , "2010-10" ,"2011-01", "2011-04","2011-07", "2011-10", "2012-02" , "2012-05", "2012-08" ,"2012-11" ,"2013-04", "2013-08","2013-12", "2014-04" , "2014-08", "2015-07" , "2015-11" ,"2016-02" , "2016-05" ,"2016-09" , "2016-12", "2017-03" ,"2017-06" , "2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Political uncertainty in South Africa - refined index") +
     theme_base()+
@@ -657,6 +670,8 @@ fiscal_naive %>%
     geom_line() +
     scale_color_manual(values = c("#6b4596ff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+    scale_x_discrete(breaks = c("2004-01","2004-04","2004-07", "2004-10", "2005-01","2005-04" , "2005-07", "2005-10"
+ , "2006-01","2006-04" ,"2006-07" , "2006-10" ,"2007-01" ,"2007-04", "2007-07", "2007-10", "2008-01", "2008-04" ,"2008-07","2008-10" ,"2009-01" , "2009-04", "2009-07", "2009-10" , "2010-01", "2010-04" ,"2010-07" , "2010-10" ,"2011-01" , "2011-04","2011-07","2011-10" , "2012-01","2012-04", "2012-07" ,"2012-10","2013-01" , "2013-04" , "2013-07" ,"2013-10" , "2014-01","2014-04" , "2014-07" , "2014-10","2015-06" ,"2015-09","2015-12" , "2016-03" , "2016-06", "2016-09", "2016-12", "2017-03","2017-06" ,"2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Fiscal Policy uncertainty in South Africa - naive index") +
     theme_base()+
@@ -666,7 +681,7 @@ fiscal_naive %>%
       axis.text.x = element_text(angle = 90)
 )
 
-ggsave("bin/fiscal_comp_naive.jpeg")
+ggsave("bin/fiscal_comp_naive2.jpeg")
 
 
 #Refine
@@ -716,6 +731,8 @@ fiscal_refine %>%
     scale_color_manual(values = c("#eb8055ff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
     theme(legend.position="none") +
+    scale_x_discrete(breaks = c("2004-01","2004-04","2004-07", "2004-10", "2005-01","2005-04" , "2005-07", "2005-10"
+ , "2006-01","2006-04" ,"2006-07" , "2006-10" ,"2007-01" ,"2007-04", "2007-07", "2007-10", "2008-01", "2008-04" ,"2008-07","2008-10" ,"2009-01" , "2009-04", "2009-07", "2009-10" , "2010-01", "2010-04" ,"2010-07" , "2010-10" ,"2011-01" , "2011-04","2011-07","2011-10" , "2012-01","2012-04", "2012-07" ,"2012-10","2013-01" , "2013-04" , "2013-07" ,"2013-10" , "2014-01","2014-04" , "2014-07" , "2014-10","2015-06" ,"2015-09","2015-12" , "2016-03" , "2016-06", "2016-09", "2016-12", "2017-03","2017-06" ,"2017-09"))+
     ggtitle("Evolution of Fiscal Policy uncertainty in South Africa - refined index") +
     theme_base()+
     theme(
@@ -778,6 +795,8 @@ monetary_naive %>%
     scale_color_manual(values = c("#31668dff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
     theme(legend.position="none") +
+    scale_x_discrete(breaks = c("2004-01" , "2004-04","2004-07" ,"2004-10" ,"2005-01", "2005-04", "2005-07" ,"2005-10", "2006-01" , "2006-04" , "2006-07" ,
+"2006-10", "2007-01" , "2007-04", "2007-07", "2007-10" ,"2008-01" , "2008-04", "2008-07", "2008-10" ,"2009-01" ,"2009-04" ,"2009-07" , "2009-10" , "2010-01", "2010-04" ,"2010-07","2010-10" , "2011-01" , "2011-04","2011-07" , "2011-10" , "2012-01","2012-04", "2012-07", "2012-10", "2013-01" , "2013-04" ,"2013-07" ,"2013-10" , "2014-01", "2014-04" , "2014-07", "2014-10" , "2015-06", "2015-09", "2015-12", "2016-03" ,"2016-06", "2016-09" ,"2016-12" , "2017-03","2017-06", "2017-09"))+
     ggtitle("Evolution of Monetary Policy uncertainty in South Africa - naive index") +
     theme_base()+
     theme(
@@ -835,6 +854,8 @@ monetary_refine %>%
     geom_line() +
     scale_color_manual(values = c("#6dcc58ff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+    scale_x_discrete(breaks = c("2004-01" , "2004-04","2004-07" ,"2004-10" ,"2005-01", "2005-04", "2005-07" ,"2005-10", "2006-01" , "2006-04" , "2006-07" ,
+"2006-10", "2007-01" , "2007-04", "2007-07", "2007-10" ,"2008-01" , "2008-04", "2008-07", "2008-10" ,"2009-01" ,"2009-04" ,"2009-07" , "2009-10" , "2010-01", "2010-04" ,"2010-07","2010-10" , "2011-01" , "2011-04","2011-07" , "2011-10" , "2012-01","2012-04", "2012-07", "2012-10", "2013-01" , "2013-04" ,"2013-07" ,"2013-10" , "2014-01", "2014-04" , "2014-07", "2014-10" , "2015-06", "2015-09", "2015-12", "2016-03" ,"2016-06", "2016-09" ,"2016-12" , "2017-03","2017-06", "2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Monetary Policy uncertainty in South Africa - refined index") +
     theme_base()+
@@ -894,6 +915,8 @@ financial_naive %>%
     geom_line() +
     scale_color_manual(values = c("#472775ff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+    scale_x_discrete(breaks = c("2004-01" , "2004-04","2004-07" ,"2004-10" ,"2005-01", "2005-04", "2005-07" ,"2005-10", "2006-01" , "2006-04" , "2006-07" ,
+"2006-10", "2007-01" , "2007-04", "2007-07", "2007-10" ,"2008-01" , "2008-04", "2008-07", "2008-10" ,"2009-01" ,"2009-04" ,"2009-07" , "2009-10" , "2010-01", "2010-04" ,"2010-07","2010-10" , "2011-01" , "2011-04","2011-07" , "2011-10" , "2012-01","2012-04", "2012-07", "2012-10", "2013-01" , "2013-04" ,"2013-07" ,"2013-10" , "2014-01", "2014-04" , "2014-07", "2014-10" , "2015-06", "2015-09", "2015-12", "2016-03" ,"2016-06", "2016-09" ,"2016-12" , "2017-03","2017-06", "2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Financial uncertainty in South Africa - naive index") +
     theme_base()+
@@ -952,6 +975,8 @@ financial_refine %>%
     geom_line() +
     scale_color_manual(values = c("#b0dd31ff", "grey")) +
     scale_size_manual(values=c(1.5,0.2)) +
+      scale_x_discrete(breaks = c("2004-01" , "2004-04","2004-07" ,"2004-10" ,"2005-01", "2005-04", "2005-07" ,"2005-10", "2006-01" , "2006-04" , "2006-07" ,
+"2006-10", "2007-01" , "2007-04", "2007-07", "2007-10" ,"2008-01" , "2008-04", "2008-07", "2008-10" ,"2009-01" ,"2009-04" ,"2009-07" , "2009-10" , "2010-01", "2010-04" ,"2010-07","2010-10" , "2011-01" , "2011-04","2011-07" , "2011-10" , "2012-01","2012-04", "2012-07", "2012-10", "2013-01" , "2013-04" ,"2013-07" ,"2013-10" , "2014-01", "2014-04" , "2014-07", "2014-10" , "2015-06", "2015-09", "2015-12", "2016-03" ,"2016-06", "2016-09" ,"2016-12" , "2017-03","2017-06", "2017-09"))+
     theme(legend.position="none") +
     ggtitle("Evolution of Financial uncertainty in South Africa - refined index") +
     theme_base()+
@@ -1131,10 +1156,19 @@ second_cohort <- rawdata %>%
 write_rds(first_cohort, "data/first.rds")
 write_rds(second_cohort, "data/second.rds")
 
+library("plyr")
 
-temp<- second %>% filter(year_month=="2017-03") %>% select(year_month, PubDate, us) %>% 
+temp<- second %>% filter(year_month=="2017-07") %>% select(year_month, PubDate, us) %>% 
   unique() %>% arrange(us, decreasing=TRUE) %>% 
   head(., n = 5) %>% arrange(PubDate)
+
+temp<- first %>% filter(year_month=="2010-02") %>% select(year_month, PubDate, us) %>% 
+  unique() %>% arrange(us, decreasing=TRUE) %>% 
+  head(., n = 5) %>% arrange(PubDate)
+
+test <- financial_comps %>% 
+  filter(index == "refined") %>% 
+  filter(year_month<="2010-02" & year_month>="2007-11")
 ```
 
 ##Breakpoint analysis
@@ -1199,6 +1233,19 @@ breakpoint_fin <- fin_refine_pe %>%
 
 
 ```
+
+```{r}
+if(!require("pastecs")) install.packages("pastecs") 
+library("pastecs")
+
+
+
+stat.desc(pol_refine_pe$composite)
+
+
+```
+
+
 
 ```{r}
 parallel::stopCluster(cl)
