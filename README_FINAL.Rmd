@@ -14,8 +14,10 @@ Loading the necessary packages
 if(!require("SentimentAnalysis")) install.packages("SentimentAnalysis") 
 if(!require("future")) install.packages("future")
 if(!require("strucchange")) install.packages("strucchange")
+if(!require("GGally")) install.packages("GGally") 
+if(!require("pastecs")) install.packages("pastecs") 
 library(rmsfuns)
-load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate", "zoo", "strucchange"))
+load_pkg(c("tidyverse","SentimentAnalysis","tbl2xts","ggthemes","ggplot2", "furrr", "viridisLite", "viridis", "lubridate", "zoo", "strucchange", "GGally", "pastecs", "data.table"))
 ```
 Create the necessary folders
 ```{r}
@@ -489,16 +491,6 @@ write_rds(x = financial_refine, "data/financial_refine.rds")
 
 
 #Composite indices
-
-```{r}
-year.range.major <- function(political_naive, column = "year_month", n = 4){
-  range <- diff(range(political_naive[,column]))
-  range.num <- as.numeric(range)
-  major = max(pretty((range.num/12)/n))
-
-  return(paste(major,"years"))
-}
-```
 
 ##Political
 ```{r}
@@ -1235,16 +1227,151 @@ breakpoint_fin <- fin_refine_pe %>%
 ```
 
 ```{r}
-if(!require("pastecs")) install.packages("pastecs") 
-library("pastecs")
+
+summ <- pol_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(political = pol_refine_pe$composite) 
+
+summ1 <-mon_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(monetary = mon_refine_pe$composite) 
+
+setDT(summ)
+setDT(summ1)
+
+comb <- summ1[summ, on = c('year_month')]
+
+summ2 <- fis_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(fiscal = fis_refine_pe$composite) 
+  
+setDT(summ2)
+setDT(comb)
+
+comb1 <- comb[summ2, on = c('year_month')]
+
+summ3 <- fin_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(financial = fin_refine_pe$composite) 
+  
+setDT(summ3)
+setDT(comb1)
+
+comb2 <- comb1[summ3, on = c('year_month')]
+final_comb <- na.omit(comb2) %>% select(-year_month)
 
 
+# Check correlation between variables
+cor(final_comb) 
+ 
+# Check correlations (as scatterplots), distribution and print corrleation coefficient 
+ggpairs(final_comb) 
 
-stat.desc(pol_refine_pe$composite)
 
+#Constructuting summary table by hand
+stat_pol <- stat.desc(pol_refine_pe$composite)
+stat_mon <- stat.desc(mon_refine_pe$composite)
+stat_fis <- stat.desc(fis_refine_pe$composite)
+stat_fin <- stat.desc(fin_refine_pe$composite)
 
+summ <- data.frame(row.names = c("Min", "Max", "Std.dev"))
+summ <- add_column(summ, monetary = c(stat_mon[4], stat_mon[5], stat_mon[13]))
+summ <- add_column(summ, political = c(stat_pol[4], stat_pol[5], stat_pol[13]))
+summ <- add_column(summ, fiscal = c(stat_fis[4], stat_fis[5], stat_fis[13]))
+summ <- add_column(summ, financial = c(stat_fin[4], stat_fin[5], stat_fin[13]))
+
+xtable::xtable(summ)
 ```
 
+#Comparative analysis
+```{r}
+library(readxl)
+comparative <- read_excel("data/South_African_Uncertainty_Indices_Q1_2018.xls")
+
+comparative <- comparative %>% 
+  mutate(policys= scale(comparative$policy)) %>%
+  mutate(politicals = scale(comparative$political)) %>% 
+  select(Quarter, policys, politicals)
+
+ggplot(data = comparative,aes(x=Quarter, y = policys))+
+  geom_line()
+
+
+ggplot(data = comparative,aes(x=Quarter, y = politicals))+
+  geom_line()
+
+pol_quarter <- pol_refine_pe %>% 
+  select(year_month, composite) %>% 
+  mutate(quarter = as.yearqtr(year_month, format="%Y-%m")) %>% 
+  group_by(quarter) %>% 
+  mutate(index = mean(composite)) %>% 
+  select(quarter, index) %>% 
+  unique()
+
+comparative <- comparative %>% 
+  mutate(quarter = as.yearqtr(Quarter)) %>% 
+  select(quarter, politicals)
+
+setDT(comparative)
+setDT(pol_quarter)
+
+comparative_political <- comparative[pol_quarter, on = c('quarter')]
+comparative_political <- na.omit(comparative_political) 
+
+colnames(comparative_political) <- c("quarter","comparative", "political_refined")
+
+ggplot(data = comparative_political, aes(x = quarter))+
+  geom_line(aes(y = political_refined, color = "political_refined"))+
+  geom_line(aes(y= comparative, color="comparative"))+
+  theme_base()+
+  labs()
+
+fis_quarter <- fis_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(fiscal= fis_refine_pe$composite) %>% 
+  mutate(quarter = as.yearqtr(year_month, format="%Y-%m")) %>% 
+  group_by(quarter) %>% 
+  mutate(fiscal_qtr = mean(fiscal)) %>% 
+  select(quarter, fiscal_qtr) %>% 
+  unique()
+
+mon_quarter <- mon_refine_pe %>% 
+  select(year_month) %>% 
+  mutate(monetary= mon_refine_pe$composite) %>% 
+  mutate(quarter = as.yearqtr(year_month, format="%Y-%m")) %>% 
+  group_by(quarter) %>% 
+  mutate(monetary_qtr = mean(monetary)) %>% 
+  select(quarter, monetary_qtr) %>% 
+  unique()
+
+policies <- fis_quarter 
+
+setDT(policies)
+setDT(mon_quarter)
+
+policies <- policies[mon_quarter, on = c('quarter')]
+
+
+comparative <- comparative %>% 
+  mutate(quarter = as.yearqtr(Quarter)) %>% 
+  select(quarter, policys)
+
+ 
+setDT(comparative)
+setDT(policies)
+
+comparative_policies<- comparative[policies, on = c('quarter')]
+comparative_policies <- na.omit(comparative_policies) 
+
+colnames(comparative_policies) <- c("quarter","comparative", "fiscal", "monetary")
+
+ggplot(data = comparative_policies, aes(x = quarter))+
+  geom_line(aes(y = fiscal, color = "fiscal"))+
+  geom_line(aes(y= monetary, color = "monetary"))+
+  geom_line(aes(y= comparative, color="comparative"))+
+  theme_base()
+  
+```
 
 
 ```{r}
